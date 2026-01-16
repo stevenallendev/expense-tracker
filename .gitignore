@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+
+# Environment variables
+.env
+
+# Build outputs
+dist/
+build/
+
+# SQLite databases
+*.sqlite
+*.sqlite3
+sessions.sqlite
+
+# OS files
+.DS_Store
+Thumbs.db

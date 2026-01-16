@@ -1,0 +1,154 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 76px;
+}
+
+
+/* main section */
+.expenseSection {
+  font-weight: bold;
+  display: flex;
+  gap: 72px;
+  justify-content: center;
+}
+
+/* expense form */
+.expenseFormContainer {
+  border-style: groove;
+  float: 1;
+}
+
+.expenseForm {
+  display: grid;
+  align-items: center;
+  gap: 12px 16px;
+  grid-template-columns: 150px 1fr;
+}
+
+.expenseForm label {
+  display: contents;
+}
+
+.expenseForm label span {
+  text-align: left;
+  font-weight: 900;
+}
+
+.expenseForm input,
+.expenseForm select {}
+
+.expenseForm {
+  display: grid;
+  gap: 12px;
+}
+
+.addExpenseBtn {
+  font-size: 16px;
+  font-weight: bold;
+  justify-self: center;
+  grid-column: 1 / -1;
+}
+
+/* expense data */
+.expenseDataContainer {
+  border-style: groove;
+  flex-direction: column;
+  float: 2;
+}
+
+.expenseTableWrapper {
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.expenseTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.expenseTableTitles {
+  width: 100%;
+}
+
+.expanseTableInfo {}
+
+.expenseTable th,
+.expenseTable td {
+  padding: 8px;
+  width: 100%;
+
+}
+
+.expenseTable thead th {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1;
+}
+
+.amountCol {
+  text-align: right;
+}
+
+.expenseData {
+  background-color: green;
+}
+
+.errorMessage {
+  color: crimson;
+  width: 100%;
+  background-color: blue;
+}
+
+/* sign up form */
+.signupForm {
+  display: grid;
+  align-items: center;
+  gap: 12px 16px;
+}
+
+
+/* Icon buttons */
+.actions {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.iconButton.edit {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.iconButton.edit:hover {
+   background-color: rgba(0, 255, 0, 0.1);
+
+}
+.iconButton.delete:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+}

@@ -1,0 +1,12 @@
+Things to implement into expense traceker:
+
+input max amount to spend (budget; per week/monnth/year)
+trigger alert when expenses go over that amount
+be able to allocate to different categories (food, gas, leisure, etc; cannot exceed max amount to spend)
+show amount expenses are over the max (probably in red)
+input expenses + post to server
+read expenses; option to view by category
+delete expenses (if needed)
+login screen (cookies to stay logged in)
+fields: id-pk, amount-int/float, date-date,category-varchar, description-text, created_at-timestamp, user_id-foreignkey 
+
