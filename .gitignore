@@ -19,3 +19,6 @@ sessions.sqlite
 # OS files
 .DS_Store
 Thumbs.db
+
+# personal
+expenseTrackerToDoList.txt
