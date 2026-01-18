@@ -39,6 +39,9 @@ export default function Tracker() {
   //For User Information
   const [user, setUser] = useState(null);
 
+  //For Logging Out
+const [loggingOut, setLoggingOut] = useState(false);
+
 
   const categories = useMemo(
     () => ["Food", "Gas", "Bills", "Shopping", "Entertainment", "Other"],
@@ -119,6 +122,23 @@ export default function Tracker() {
 
   loadUser();
 }, []);
+
+async function onLogout() {
+  setLoggingOut(true);
+  setError("");
+
+  try {
+    await fetch(`${API}/api/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch {
+    // Even if the server is down, treat it like "logged out" on the client.
+  } finally {
+    setLoggingOut(false);
+    navigate("/login");
+  }
+}
 
 
 
@@ -333,7 +353,15 @@ export default function Tracker() {
           <h2>Expenses</h2>
 {user && (
   <p className="welcomeText">
-    Welcome, <strong>{user.username}</strong>
+    Welcome, <strong>{user.username} </strong> 
+      <button
+    type="button"
+    className="logoutBtn"
+    onClick={onLogout}
+    disabled={loggingOut}
+  >
+    {loggingOut ? "Logging out..." : "Temp logoutbutton placeholder"}
+  </button>
   </p>
 )}
           <h3>
