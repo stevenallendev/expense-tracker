@@ -115,6 +115,11 @@
   background-color: blue;
 }
 
+/* Future Expenses */
+.futureExpenses{
+  display: grid;
+}
+
 /* sign up form */
 .signupForm {
   display: grid;
