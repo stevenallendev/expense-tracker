@@ -351,8 +351,16 @@ const paidExpenses = useMemo(
 
 
 
+//dynamically change "total" label when filtering
+const totalLabel = useMemo(() => {
+  if (!month && !year) return "Total";
 
+  if (month && year) return `Total for ${month} ${year}`;
+  if (month) return `Total for ${month}`;
+  if (year) return `Total for ${year}`;
 
+  return "Total";
+}, [month, year]);
 
 
 
@@ -472,7 +480,8 @@ const paidExpenses = useMemo(
 
             <h3>
               Search:{" "}
-              <select value={month} onChange={(e) => setMonth(e.target.value)}>
+              <select value={month} onChange={(e) => setMonth(e.target.value)}
+              disabled={!year}>
                 <option value="">Month</option>
                 {months.map((m) => (
                   <option key={m} value={m}>
@@ -642,7 +651,7 @@ const paidExpenses = useMemo(
                               disabled={editingId !== null}
                               title="Mark unpaid"
                             >
-                              ✅ Paid🥖
+                              ✅ Paid
                             </button>
 
                           </td>
@@ -655,7 +664,7 @@ const paidExpenses = useMemo(
             )}
 
             <br />
-            <p>Filtered total amount: ${totalDollars}</p>
+            <p>{totalLabel} ${totalDollars}</p>
           </section>
         </div>
 
