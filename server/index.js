@@ -10,6 +10,8 @@ const expenseRoutes = require("./routes/expenses");
 
 const app = express();
 app.use(express.json());
+// app.use("/api/expenses", expenseRoutes(db));
+
 
 app.use(
   cors({

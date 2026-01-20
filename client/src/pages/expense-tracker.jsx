@@ -9,6 +9,9 @@ const API = "http://localhost:4000";
 export default function Tracker() {
   const navigate = useNavigate();
 
+  // -----------------------------
+  // State
+  // -----------------------------
   // Create Add Expense form
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(todayYYYYMMDD());
@@ -18,15 +21,13 @@ export default function Tracker() {
   // Toggle Add Expense form
   const [showAddForm, setShowAddForm] = useState(false);
 
-
-
-  // Data and Status
+  // Data and status
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // EDIT row
+  // Edit row
   const [editingId, setEditingId] = useState(null);
   const [editAmount, setEditAmount] = useState("");
   const [editDate, setEditDate] = useState(todayYYYYMMDD());
@@ -34,71 +35,115 @@ export default function Tracker() {
   const [editDescription, setEditDescription] = useState("");
   const [updating, setUpdating] = useState(false);
 
-  //Category Filter
+  // Filters
   const [categoryFilter, setCategoryFilter] = useState("All");
-
-  //Date Filter
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
 
-  //For User Information
+  // User
   const [user, setUser] = useState(null);
-
-  //For Logging Out
   const [loggingOut, setLoggingOut] = useState(false);
 
+  // -----------------------------
+  // Constants / helper funcs
+  // -----------------------------
+  const today = todayYYYYMMDD();
+  const safeExpenses = Array.isArray(expenses) ? expenses : [];
 
   const categories = useMemo(
     () => ["Food", "Gas", "Bills", "Shopping", "Entertainment", "Other"],
     []
   );
 
-
-  //for "Month" search
   const months = useMemo(
     () => [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December",
     ],
     []
   );
 
-
-  //for "Year" search
   const currentYear = new Date().getFullYear();
   const yearOptions = useMemo(() => {
     const years = [];
     for (let y = currentYear + 1; y >= 2000; y--) years.push(String(y));
     return years;
-  }, []);
+  }, [currentYear]);
+
+  function createdDateYYYYMMDD(e) {
+    // "2026-01-20 14:03:22" -> "2026-01-20"
+    return (e.created_at ?? "").slice(0, 10);
+  }
+
+  // -----------------------------
+  // Derived data (in dependency order)
+  // -----------------------------
+  const withFlags = useMemo(() => {
+    return safeExpenses.map((e) => {
+      const createdDate = createdDateYYYYMMDD(e);
+      const originallyFuture = createdDate ? e.date > createdDate : false;
+      return { ...e, originallyFuture };
+    });
+  }, [safeExpenses]);
+
+  // RIGHT SIDE
+  // const upcomingFuture = useMemo(
+  //   () => withFlags.filter(e => e.originallyFuture && !e.paid_at && e.date > today),
+  //   [withFlags, today]
+  // );
+
+  // const pastDueFuture = useMemo(
+  //   () => withFlags.filter(e => e.originallyFuture && !e.paid_at && e.date <= today),
+  //   [withFlags, today]
+  // );
+
+  const unpaidExpenses = useMemo(
+  () => safeExpenses.filter((e) => !e.paid_at),
+  [safeExpenses]
+);
+
+const pastDueUnpaid = useMemo(
+  () => unpaidExpenses.filter((e) => e.date <= today),
+  [unpaidExpenses, today]
+);
+
+const upcomingUnpaid = useMemo(
+  () => unpaidExpenses.filter((e) => e.date > today),
+  [unpaidExpenses, today]
+);
 
 
+  // LEFT SIDE
+const paidExpenses = useMemo(
+  () => safeExpenses.filter((e) => !!e.paid_at),
+  [safeExpenses]
+);
+
+
+  // Filtered table data MUST come after paidExpenses exists
   const filteredExpenses = useFilteredExpenses({
-    expenses,
+    expenses: paidExpenses,
     categoryFilter,
     month,
     year,
     months,
   });
 
+  const totalCents = useMemo(
+    () => filteredExpenses.reduce((sum, e) => sum + e.amount_cents, 0),
+    [filteredExpenses]
+  );
+  const totalDollars = (totalCents / 100).toFixed(2);
+
+  // -----------------------------
+  // Data loading / handlers
+  // -----------------------------
   async function loadExpenses() {
     setLoading(true);
     setError("");
 
     try {
-      const res = await fetch(`${API}/api/expenses`, {
-        credentials: "include",
-      });
+      const res = await fetch(`${API}/api/expenses`, { credentials: "include" });
 
       if (res.status === 401) {
         navigate("/login");
@@ -114,64 +159,38 @@ export default function Tracker() {
     }
   }
 
-  const totalCents = useMemo(() => {
-    return filteredExpenses.reduce(
-      (sum, e) => sum + e.amount_cents,
-      0
-    );
-  }, [filteredExpenses]);
 
-  const totalDollars = (totalCents / 100).toFixed(2);
-
-
-
-  //get user information on new session
-  useEffect(() => {
-    async function loadUser() {
-      try {
-        const res = await fetch(`${API}/api/me`, {
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          navigate("/login");
-          return;
-        }
-
-        const data = await res.json();
-        setUser(data.user);
-      } catch {
-        navigate("/login");
-      }
-    }
-
-    loadUser();
-  }, []);
-
-
-  //terminate session on logout
-  async function onLogout() {
-    setLoggingOut(true);
-    setError("");
-
-    try {
-      await fetch(`${API}/api/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-    } catch {
-      // Even if the server is down, treat it like "logged out" on the client.
-    } finally {
-      setLoggingOut(false);
-      navigate("/login");
-    }
+ async function setPaid(id, paid) {
+  if (typeof paid !== "boolean") {
+    console.error("setPaid paid must be boolean, got:", paid, typeof paid);
+    return;
   }
 
+  const msg = paid ? "Mark this expense as paid?" : "Mark this expense as unpaid?";
+  if (!window.confirm(msg)) return;
 
-  // load expenses once and only once on sign in
-  useEffect(() => {
-    loadExpenses();
-  }, []);
+  setError("");
+
+  try {
+    const res = await fetch(`${API}/api/expenses/${id}/set-paid`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ paid }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data?.error ?? "Failed to update paid status");
+      return;
+    }
+
+    await loadExpenses();
+  } catch {
+    setError("Failed to update paid status");
+  }
+}
+
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -190,15 +209,10 @@ export default function Tracker() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({
-          amount_cents,
-          date,
-          category,
-          description,
-        }),
+        body: JSON.stringify({ amount_cents, date, category, description }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         setError(data?.error ?? "Failed to save expense");
       } else {
@@ -213,8 +227,6 @@ export default function Tracker() {
     }
   }
 
-
-  //expense delete functions
   async function onDelete(id) {
     if (!window.confirm("Delete this expense?")) return;
 
@@ -232,8 +244,6 @@ export default function Tracker() {
     await loadExpenses();
   }
 
-
-  //expense edit functions
   function startEdit(expense) {
     setEditingId(expense.id);
     setEditAmount((expense.amount_cents / 100).toFixed(2));
@@ -282,7 +292,6 @@ export default function Tracker() {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         setError(data?.error ?? "Failed to update expense");
-        setUpdating(false);
         return;
       }
 
@@ -294,6 +303,48 @@ export default function Tracker() {
       setUpdating(false);
     }
   }
+
+  async function onLogout() {
+    setLoggingOut(true);
+    setError("");
+
+    try {
+      await fetch(`${API}/api/logout`, { method: "POST", credentials: "include" });
+    } catch {
+      // ignore
+    } finally {
+      setLoggingOut(false);
+      navigate("/login");
+    }
+  }
+
+  // -----------------------------
+  // Effects
+  // -----------------------------
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`${API}/api/me`, { credentials: "include" });
+        if (!res.ok) {
+          navigate("/login");
+          return;
+        }
+        const data = await res.json();
+        setUser(data.user);
+      } catch {
+        navigate("/login");
+      }
+    })();
+  }, [navigate]);
+
+  useEffect(() => {
+    loadExpenses();
+  }, []); // keep as-is for now
+
+  // -----------------------------
+  // return (...) comes next
+  // -----------------------------
+
 
 
 
@@ -322,26 +373,30 @@ export default function Tracker() {
             onClick={onLogout}
             disabled={loggingOut}
           >
-            {loggingOut ? "Logging out..." : "Temp logoutbutton placeholder"}
+            {loggingOut ? "Logging out..." : "Logout"}
           </button>
         </p>
       )}
+
       <h1 className="title">Expense Tracker</h1>
 
-
-      {/* Expense Section ------------------------------------------------------------------------ */}
       <div className="expenseSection">
+        {/* LEFT COLUMN */}
         <div className="leftColumn">
+          {/* Add Expense */}
           <section className="expenseFormContainer">
+            <div className="addExpenseHeader">
+              <h2>Expenses</h2>
 
-            <button
-              type="button"
-              className="addExpenseToggleBtn"
-              onClick={() => setShowAddForm((v) => !v)}
-              aria-expanded={showAddForm}
-            >
-              {showAddForm ? "- Close" : "+ Add Expense"}
-            </button>
+              <button
+                type="button"
+                className="addExpenseToggleBtn"
+                onClick={() => setShowAddForm((v) => !v)}
+                aria-expanded={showAddForm}
+              >
+                {showAddForm ? "- Close" : "+ Add Expense"}
+              </button>
+            </div>
 
             {showAddForm && (
               <form className="expenseForm" onSubmit={onSubmit}>
@@ -367,7 +422,10 @@ export default function Tracker() {
 
                 <label>
                   <span>Category</span>
-                  <select value={category} onChange={(e) => setCategory(e.target.value)}>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                  >
                     {categories.map((c) => (
                       <option key={c}>{c}</option>
                     ))}
@@ -381,7 +439,9 @@ export default function Tracker() {
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Lunch, Netflix, etc."
                     required
-                    onInvalid={(e) => e.target.setCustomValidity("Description Required")}
+                    onInvalid={(e) =>
+                      e.target.setCustomValidity("Description Required")
+                    }
                     onInput={(e) => e.target.setCustomValidity("")}
                   />
                 </label>
@@ -406,8 +466,7 @@ export default function Tracker() {
             )}
           </section>
 
-
-          {/* Expenses Section ----------------------------------------------------------------------------------------------------------- */}
+          {/* Expenses Table */}
           <section className="expenseDataContainer">
             <h2>Expenses</h2>
 
@@ -421,14 +480,14 @@ export default function Tracker() {
                   </option>
                 ))}
               </select>{" "}
-
               <select value={year} onChange={(e) => setYear(e.target.value)}>
                 <option value="">Year</option>
                 {yearOptions.map((y) => (
-                  <option key={y} value={y}>{y}</option>
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
                 ))}
-              </select>
-
+              </select>{" "}
               <button
                 type="button"
                 onClick={() => {
@@ -436,7 +495,6 @@ export default function Tracker() {
                   setMonth("");
                   setYear("");
                 }}
-
               >
                 Clear
               </button>
@@ -460,8 +518,10 @@ export default function Tracker() {
 
             {loading ? (
               <p>Loading...</p>
-            ) : expenses.length === 0 ? (
+            ) : paidExpenses.length === 0 ? (
               <p>No expenses yet.</p>
+            ) : filteredExpenses.length === 0 ? (
+              <p>No results for this filter.</p>
             ) : (
               <div className="expenseTableWrapper">
                 <table className="expenseTable">
@@ -574,6 +634,17 @@ export default function Tracker() {
                             >
                               🗑️
                             </button>
+
+                            <button
+                              className="iconButton"
+                              type="button"
+                              onClick={() => setPaid(e.id, false)}
+                              disabled={editingId !== null}
+                              title="Mark unpaid"
+                            >
+                              ✅ Paid🥖
+                            </button>
+
                           </td>
                         </tr>
                       )
@@ -583,31 +654,78 @@ export default function Tracker() {
               </div>
             )}
 
-
             <br />
-            <br />
-            <p>Filtered total amount placeholder: ${totalDollars}</p>
-
-
-
+            <p>Filtered total amount: ${totalDollars}</p>
           </section>
         </div>
-        <div className="rightColumn">
+
+        {/* RIGHT COLUMN */}
+        <aside className="rightColumn">
           <section className="futureExpenses">
             <h3>Future Expenses</h3>
-            to do in this area: <br />
-            past due expenses float to top and become red - maybe separate closed off Section <br />
-            remaining stay below <br />
-            all future expenses witll have a "mark as paid" button of some sort <br />
-            button will ask y/n confirmation <br />
-            y-confirmed expenses will be moved to normal expenses section
 
+            <h4>Past Due</h4>
+            {pastDueUnpaid.length === 0 ? (
+              <p>None.</p>
+            ) : (
+              <ul className="futureList">
+                {pastDueUnpaid.map((e) => (
+                  <li key={e.id} className="futureItem due">
+                    <div className="futureInfo">
+                      <strong>{e.description}</strong>
+                      <div className="futureMeta">
+                        {formatMMDDYYYY(e.date)} • {e.category}
+                      </div>
+                      <div className="futureAmount">
+                        ${(e.amount_cents / 100).toFixed(2)}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="markPaidBtn"
+                      onClick={() => setPaid(e.id, true)}
+                    >
+                      Mark paid
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <h4>Upcoming</h4>
+            {upcomingUnpaid.length === 0 ? (
+              <p>No upcoming.</p>
+            ) : (
+              <ul className="futureList">
+                {upcomingUnpaid.map((e) => (
+                  <li key={e.id} className="futureItem">
+                    <div className="futureInfo">
+                      <strong>{e.description}</strong>
+                      <div className="futureMeta">
+                        {formatMMDDYYYY(e.date)} • {e.category}
+                      </div>
+                      <div className="futureAmount">
+                        ${(e.amount_cents / 100).toFixed(2)}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="markPaidBtn"
+                      onClick={() => setPaid(e.id, true)}
+                    >
+                      Mark paid
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
-        </div>
-
-
-
+        </aside>
       </div>
     </main>
   );
+
+
 }
