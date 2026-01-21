@@ -53,7 +53,6 @@ async function onSubmit(e) {
     <div className="page">
       <main className="content">
 
-      Temp link to <Link to="/expense-tracker">ExpenseTracker</Link>
         <h1 className="title">Login</h1>
 
         <form className="loginForm" onSubmit={onSubmit}>

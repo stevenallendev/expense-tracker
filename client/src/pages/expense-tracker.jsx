@@ -66,7 +66,7 @@ export default function Tracker() {
   const currentYear = new Date().getFullYear();
   const yearOptions = useMemo(() => {
     const years = [];
-    for (let y = currentYear + 1; y >= 2000; y--) years.push(String(y));
+    for (let y = currentYear + 5; y >= 2020; y--) years.push(String(y));
     return years;
   }, [currentYear]);
 
@@ -78,46 +78,29 @@ export default function Tracker() {
   // -----------------------------
   // Derived data (in dependency order)
   // -----------------------------
-  const withFlags = useMemo(() => {
-    return safeExpenses.map((e) => {
-      const createdDate = createdDateYYYYMMDD(e);
-      const originallyFuture = createdDate ? e.date > createdDate : false;
-      return { ...e, originallyFuture };
-    });
-  }, [safeExpenses]);
 
-  // RIGHT SIDE
-  // const upcomingFuture = useMemo(
-  //   () => withFlags.filter(e => e.originallyFuture && !e.paid_at && e.date > today),
-  //   [withFlags, today]
-  // );
-
-  // const pastDueFuture = useMemo(
-  //   () => withFlags.filter(e => e.originallyFuture && !e.paid_at && e.date <= today),
-  //   [withFlags, today]
-  // );
 
   const unpaidExpenses = useMemo(
-  () => safeExpenses.filter((e) => !e.paid_at),
-  [safeExpenses]
-);
+    () => safeExpenses.filter((e) => !e.paid_at),
+    [safeExpenses]
+  );
 
-const pastDueUnpaid = useMemo(
-  () => unpaidExpenses.filter((e) => e.date <= today),
-  [unpaidExpenses, today]
-);
+  const pastDueUnpaid = useMemo(
+    () => unpaidExpenses.filter((e) => e.date <= today),
+    [unpaidExpenses, today]
+  );
 
-const upcomingUnpaid = useMemo(
-  () => unpaidExpenses.filter((e) => e.date > today),
-  [unpaidExpenses, today]
-);
+  const upcomingUnpaid = useMemo(
+    () => unpaidExpenses.filter((e) => e.date > today),
+    [unpaidExpenses, today]
+  );
 
 
   // LEFT SIDE
-const paidExpenses = useMemo(
-  () => safeExpenses.filter((e) => !!e.paid_at),
-  [safeExpenses]
-);
+  const paidExpenses = useMemo(
+    () => safeExpenses.filter((e) => !!e.paid_at),
+    [safeExpenses]
+  );
 
 
   // Filtered table data MUST come after paidExpenses exists
@@ -135,9 +118,15 @@ const paidExpenses = useMemo(
   );
   const totalDollars = (totalCents / 100).toFixed(2);
 
+  const isEditing = (e) => editingId === e.id;
+
+  const isLocked = (e) => editingId !== null && editingId !== e.id;
+
   // -----------------------------
   // Data loading / handlers
   // -----------------------------
+
+
   async function loadExpenses() {
     setLoading(true);
     setError("");
@@ -160,36 +149,36 @@ const paidExpenses = useMemo(
   }
 
 
- async function setPaid(id, paid) {
-  if (typeof paid !== "boolean") {
-    console.error("setPaid paid must be boolean, got:", paid, typeof paid);
-    return;
-  }
-
-  const msg = paid ? "Mark this expense as paid?" : "Mark this expense as unpaid?";
-  if (!window.confirm(msg)) return;
-
-  setError("");
-
-  try {
-    const res = await fetch(`${API}/api/expenses/${id}/set-paid`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ paid }),
-    });
-
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data?.error ?? "Failed to update paid status");
+  async function setPaid(id, paid) {
+    if (typeof paid !== "boolean") {
+      console.error("setPaid paid must be boolean, got:", paid, typeof paid);
       return;
     }
 
-    await loadExpenses();
-  } catch {
-    setError("Failed to update paid status");
+    const msg = paid ? "Mark this expense as paid?" : "Mark this expense as unpaid?";
+    if (!window.confirm(msg)) return;
+
+    setError("");
+
+    try {
+      const res = await fetch(`${API}/api/expenses/${id}/set-paid`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ paid }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data?.error ?? "Failed to update paid status");
+        return;
+      }
+
+      await loadExpenses();
+    } catch {
+      setError("Failed to update paid status");
+    }
   }
-}
 
 
   async function onSubmit(e) {
@@ -351,16 +340,16 @@ const paidExpenses = useMemo(
 
 
 
-//dynamically change "total" label when filtering
-const totalLabel = useMemo(() => {
-  if (!month && !year) return "Total";
+  //dynamically change "total" label when filtering
+  const totalLabel = useMemo(() => {
+    if (!month && !year) return "Total";
 
-  if (month && year) return `Total for ${month} ${year}`;
-  if (month) return `Total for ${month}`;
-  if (year) return `Total for ${year}`;
+    if (month && year) return `Total for ${month} ${year}`;
+    if (month) return `Total for ${month}`;
+    if (year) return `Total for ${year}`;
 
-  return "Total";
-}, [month, year]);
+    return "Total";
+  }, [month, year]);
 
 
 
@@ -386,16 +375,17 @@ const totalLabel = useMemo(() => {
         </p>
       )}
 
-      <h1 className="title">Expense Tracker</h1>
+      {/* ===================== LEFT COLUMN ===================== */}
 
       <div className="expenseSection">
-        {/* LEFT COLUMN */}
         <div className="leftColumn">
           {/* Add Expense */}
           <section className="expenseFormContainer">
-            <div className="addExpenseHeader">
-              <h2>Expenses</h2>
+            <div className="expenseTitle">
+              <span className="columnTitles">Expenses</span>
+            </div>
 
+            <div className="addExpenseHeader">
               <button
                 type="button"
                 className="addExpenseToggleBtn"
@@ -405,83 +395,89 @@ const totalLabel = useMemo(() => {
                 {showAddForm ? "- Close" : "+ Add Expense"}
               </button>
             </div>
+            <div className="addExpenseFormContainer">
+              {showAddForm && (
+                <form className="expenseForm" onSubmit={onSubmit}>
+                  <label>
+                    <span>Amount (USD)</span>
+                    <input
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      placeholder="12.99"
+                      required
+                    />
+                  </label>
 
-            {showAddForm && (
-              <form className="expenseForm" onSubmit={onSubmit}>
-                <label>
-                  <span>Amount (USD)</span>
-                  <input
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="12.99"
-                    required
-                  />
-                </label>
+                  <label>
+                    <span>Date</span>
+                    <input
+                      type="date"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                      required
+                    />
+                  </label>
 
-                <label>
-                  <span>Date</span>
-                  <input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    required
-                  />
-                </label>
+                  <label>
+                    <span>Category</span>
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                    >
+                      {categories.map((c) => (
+                        <option key={c}>{c}</option>
+                      ))}
+                    </select>
+                  </label>
 
-                <label>
-                  <span>Category</span>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                  >
-                    {categories.map((c) => (
-                      <option key={c}>{c}</option>
-                    ))}
-                  </select>
-                </label>
+                  <label>
+                    <span>Description</span>
+                    <input
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Lunch, Netflix, etc."
+                      required
+                      onInvalid={(e) =>
+                        e.target.setCustomValidity("Description Required")
+                      }
+                      onInput={(e) => e.target.setCustomValidity("")}
+                    />
+                  </label>
 
-                <label>
-                  <span>Description</span>
-                  <input
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Lunch, Netflix, etc."
-                    required
-                    onInvalid={(e) =>
-                      e.target.setCustomValidity("Description Required")
-                    }
-                    onInput={(e) => e.target.setCustomValidity("")}
-                  />
-                </label>
+                  <div className="addExpenseActions">
+                    <button className="addExpenseBtn" type="submit" disabled={saving}>
+                      {saving ? "Saving..." : "Add Expense"}
+                    </button>
 
-                <div className="addExpenseActions">
-                  <button className="addExpenseBtn" type="submit" disabled={saving}>
-                    {saving ? "Saving..." : "Add Expense"}
-                  </button>
+                    <button
+                      type="button"
+                      className="cancelAddBtn"
+                      onClick={() => setShowAddForm(false)}
+                      disabled={saving}
+                    >
+                      Cancel
+                    </button>
+                  </div>
 
-                  <button
-                    type="button"
-                    className="cancelAddBtn"
-                    onClick={() => setShowAddForm(false)}
-                    disabled={saving}
-                  >
-                    Cancel
-                  </button>
-                </div>
 
-                {error && <div className="errorMessage">{error}</div>}
-              </form>
-            )}
+
+                  {error && <div className="errorMessage">{error}</div>}
+                </form>
+              )}
+            </div>
+
           </section>
 
-          {/* Expenses Table */}
+          {/* Paid Expenses Table (LEFT) */}
           <section className="expenseDataContainer">
-            <h2>Expenses</h2>
-
-            <h3>
+            <div className="filterContainer">
+              {/* Filters */}
               Search:{" "}
-              <select value={month} onChange={(e) => setMonth(e.target.value)}
-              disabled={!year}>
+              <select
+                value={month}
+                onChange={(e) => setMonth(e.target.value)}
+                disabled={!year}
+              >
                 <option value="">Month</option>
                 {months.map((m) => (
                   <option key={m} value={m}>
@@ -523,12 +519,11 @@ const totalLabel = useMemo(() => {
                   ))}
                 </select>
               </label>
-            </h3>
-
+            </div>
             {loading ? (
               <p>Loading...</p>
             ) : paidExpenses.length === 0 ? (
-              <p>No expenses yet.</p>
+              <p>No paid expenses yet.</p>
             ) : filteredExpenses.length === 0 ? (
               <p>No results for this filter.</p>
             ) : (
@@ -546,7 +541,7 @@ const totalLabel = useMemo(() => {
 
                   <tbody className="expanseTableInfo">
                     {filteredExpenses.map((e) =>
-                      editingId === e.id ? (
+                      isEditing(e) ? (
                         <tr key={e.id}>
                           <td>
                             <input
@@ -625,9 +620,9 @@ const totalLabel = useMemo(() => {
                             <button
                               className="iconButton edit"
                               onClick={() => startEdit(e)}
-                              title="Edit expense"
-                              aria-label="Edit expense"
-                              disabled={editingId !== null}
+                              title="Edit"
+                              aria-label="Edit"
+                              disabled={isLocked(e)}
                               type="button"
                             >
                               ✏️
@@ -636,9 +631,9 @@ const totalLabel = useMemo(() => {
                             <button
                               className="iconButton delete"
                               onClick={() => onDelete(e.id)}
-                              title="Delete expense"
-                              aria-label="Delete expense"
-                              disabled={editingId !== null}
+                              title="Delete"
+                              aria-label="Delete"
+                              disabled={isLocked(e)}
                               type="button"
                             >
                               🗑️
@@ -648,12 +643,11 @@ const totalLabel = useMemo(() => {
                               className="iconButton"
                               type="button"
                               onClick={() => setPaid(e.id, false)}
-                              disabled={editingId !== null}
+                              disabled={isLocked(e)}
                               title="Mark unpaid"
                             >
                               ✅ Paid
                             </button>
-
                           </td>
                         </tr>
                       )
@@ -664,77 +658,289 @@ const totalLabel = useMemo(() => {
             )}
 
             <br />
-            <p>{totalLabel} ${totalDollars}</p>
+            <p>
+              {totalLabel} ${totalDollars}
+            </p>
           </section>
         </div>
 
-        {/* RIGHT COLUMN */}
+        {/* ===================== RIGHT COLUMN ===================== */}
+        
         <aside className="rightColumn">
-          <section className="futureExpenses">
-            <h3>Future Expenses</h3>
+         <div className="futureExpenseTitle">
+              <span className="columnTitles">Future Expenses</span>
+            </div>
+            <div className="rightSectionTitlesContainer">
+          <span className="rightSectionTitles">Due Soon</span>
+          </div>
+          {pastDueUnpaid.length === 0 ? (
+            <p>None.</p>
+          ) : (
+            <div className="expenseTableWrapper">
+              <table className="expenseTable">
+                <thead>
+                  <tr className="expenseTableTitles">
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th className="amountCol">Amount</th>
+                    <th></th>
+                  </tr>
+                </thead>
 
-            <h4>Past Due</h4>
-            {pastDueUnpaid.length === 0 ? (
-              <p>None.</p>
-            ) : (
-              <ul className="futureList">
-                {pastDueUnpaid.map((e) => (
-                  <li key={e.id} className="futureItem due">
-                    <div className="futureInfo">
-                      <strong>{e.description}</strong>
-                      <div className="futureMeta">
-                        {formatMMDDYYYY(e.date)} • {e.category}
-                      </div>
-                      <div className="futureAmount">
-                        ${(e.amount_cents / 100).toFixed(2)}
-                      </div>
-                    </div>
+                <tbody className="pastDueExpensesInfo">
+                  {pastDueUnpaid.map((e) =>
+                    isEditing(e) ? (
+                      <tr key={e.id}>
+                        <td>
+                          <input
+                            type="date"
+                            value={editDate}
+                            onChange={(ev) => setEditDate(ev.target.value)}
+                          />
+                        </td>
 
-                    <button
-                      type="button"
-                      className="markPaidBtn"
-                      onClick={() => setPaid(e.id, true)}
-                    >
-                      Mark paid
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
+                        <td>
+                          <select
+                            value={editCategory}
+                            onChange={(ev) => setEditCategory(ev.target.value)}
+                          >
+                            {categories.map((c) => (
+                              <option key={c} value={c}>
+                                {c}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
 
-            <h4>Upcoming</h4>
-            {upcomingUnpaid.length === 0 ? (
-              <p>No upcoming.</p>
-            ) : (
-              <ul className="futureList">
-                {upcomingUnpaid.map((e) => (
-                  <li key={e.id} className="futureItem">
-                    <div className="futureInfo">
-                      <strong>{e.description}</strong>
-                      <div className="futureMeta">
-                        {formatMMDDYYYY(e.date)} • {e.category}
-                      </div>
-                      <div className="futureAmount">
-                        ${(e.amount_cents / 100).toFixed(2)}
-                      </div>
-                    </div>
+                        <td>
+                          <input
+                            value={editDescription}
+                            onChange={(ev) => {
+                              setEditDescription(ev.target.value);
+                              if (error) setError("");
+                            }}
+                            placeholder="Lunch, Netflix, etc."
+                          />
+                        </td>
 
-                    <button
-                      type="button"
-                      className="markPaidBtn"
-                      onClick={() => setPaid(e.id, true)}
-                    >
-                      Mark paid
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+                        <td className="amountCol">
+                          <input
+                            value={editAmount}
+                            onChange={(ev) => setEditAmount(ev.target.value)}
+                            placeholder="12.99"
+                          />
+                        </td>
+
+                        <td className="actions">
+                          <button
+                            className="iconButton"
+                            onClick={() => saveEdit(e.id)}
+                            disabled={updating}
+                            title="Save"
+                            aria-label="Save"
+                            type="button"
+                          >
+                            💾
+                          </button>
+
+                          <button
+                            className="iconButton"
+                            onClick={cancelEdit}
+                            disabled={updating}
+                            title="Cancel"
+                            aria-label="Cancel"
+                            type="button"
+                          >
+                            ✖️
+                          </button>
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr key={e.id} className="futureItem due">
+                        <td>{formatMMDDYYYY(e.date)}</td>
+                        <td>{e.category}</td>
+                        <td>{e.description}</td>
+                        <td className="amountCol">
+                          ${(e.amount_cents / 100).toFixed(2)}
+                        </td>
+
+                        <td className="actions">
+                          <button
+                            className="iconButton edit"
+                            onClick={() => startEdit(e)}
+                            disabled={isLocked(e)}
+                            type="button"
+                            title="Edit"
+                          >
+                            ✏️
+                          </button>
+
+                          <button
+                            className="iconButton delete"
+                            onClick={() => onDelete(e.id)}
+                            disabled={isLocked(e)}
+                            type="button"
+                            title="Delete"
+                          >
+                            🗑️
+                          </button>
+
+                          <button
+                            type="button"
+                            title="Mark paid"
+                            className="iconButton markPaidBtn"
+                            onClick={() => setPaid(e.id, true)}
+                            disabled={isLocked(e)}
+                          >
+                            💲
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <div className="rightSectionTitlesContainer">
+          <span className="rightSectionTitles">Upcoming</span>
+          </div>
+          {upcomingUnpaid.length === 0 ? (
+            <p>No upcoming.</p>
+          ) : (
+            <div className="expenseTableWrapper">
+              <table className="expenseTable">
+                <thead>
+                  <tr className="expenseTableTitles">
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th className="amountCol">Amount</th>
+                    <th></th>
+                  </tr>
+                </thead>
+
+                <tbody className="upcomingInfo">
+                  {upcomingUnpaid.map((e) =>
+                    isEditing(e) ? (
+                      <tr key={e.id}>
+                        <td>
+                          <input
+                            type="date"
+                            value={editDate}
+                            onChange={(ev) => setEditDate(ev.target.value)}
+                          />
+                        </td>
+
+                        <td>
+                          <select
+                            value={editCategory}
+                            onChange={(ev) => setEditCategory(ev.target.value)}
+                          >
+                            {categories.map((c) => (
+                              <option key={c} value={c}>
+                                {c}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+
+                        <td>
+                          <input
+                            value={editDescription}
+                            onChange={(ev) => {
+                              setEditDescription(ev.target.value);
+                              if (error) setError("");
+                            }}
+                            placeholder="Lunch, Netflix, etc."
+                          />
+                        </td>
+
+                        <td className="amountCol">
+                          <input
+                            value={editAmount}
+                            onChange={(ev) => setEditAmount(ev.target.value)}
+                            placeholder="12.99"
+                          />
+                        </td>
+
+                        <td className="actions">
+                          <button
+                            className="iconButton"
+                            onClick={() => saveEdit(e.id)}
+                            disabled={updating}
+                            title="Save"
+                            aria-label="Save"
+                            type="button"
+                          >
+                            💾
+                          </button>
+
+                          <button
+                            className="iconButton"
+                            onClick={cancelEdit}
+                            disabled={updating}
+                            title="Cancel"
+                            aria-label="Cancel"
+                            type="button"
+                          >
+                            ✖️
+                          </button>
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr key={e.id} className="futureItem">
+                        <td>{formatMMDDYYYY(e.date)}</td>
+                        <td>{e.category}</td>
+                        <td>{e.description}</td>
+                        <td className="amountCol">
+                          ${(e.amount_cents / 100).toFixed(2)}
+                        </td>
+
+                        <td className="actions">
+                          <button
+                            className="iconButton edit"
+                            onClick={() => startEdit(e)}
+                            disabled={isLocked(e)}
+                            type="button"
+                            title="Edit"
+                          >
+                            ✏️
+                          </button>
+
+                          <button
+                            className="iconButton delete"
+                            onClick={() => onDelete(e.id)}
+                            disabled={isLocked(e)}
+                            type="button"
+                            title="Delete"
+                          >
+                            🗑️
+                          </button>
+
+                          <button
+                            type="button"
+                            title="Mark paid"
+                            className="iconButton markPaidBtn"
+                            onClick={() => setPaid(e.id, true)}
+                            disabled={isLocked(e)}
+                          >
+                            💲
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </aside>
       </div>
     </main>
   );
+
 
 
 }

@@ -30,9 +30,28 @@
   justify-content: center;
 }
 
-/* expense form */
+.expenseTitle{
+  background-color: lightblue;
+text-align: left;
+}
+
+.futureExpenseTitle{
+  background-color: lightcoral;
+  text-align: left;
+}
+
+.rightSectionTitlesContainer{
+  background-color: lightgray;
+  text-align: left;
+}
+.rightSectionTitles{
+  background-color: lightyellow;
+  font-weight: xx-bold;
+}
+
+
+/* expense add form */
 .expenseFormContainer {
-  border-style: groove;
   float: 1;
 }
 
@@ -67,25 +86,46 @@
 
 /* expense data */
 .expenseDataContainer {
-  border-style: groove;
   flex-direction: column;
   float: 2;
+}
+
+.filterContainer{
+  background-color: skyblue;
+}
+.addExpenseHeader{
+  background-color: lightgreen;
+  font-weight: xxx-bold;
+  text-align: left;
+}
+.addExpenseFormContainer{
+background-color: lightpink;
 }
 
 .expenseTableWrapper {
   max-height: 360px;
   overflow-y: auto;
+  background-color: orange;
 }
 
 .expenseTable {
   width: 100%;
   border-collapse: collapse;
+  background-color: aquamarine;
 }
 
 .expenseTableTitles {
   width: 100%;
+  background-color: yellow;
 }
 
+/* combine this with expenseTableTitles ^^ */
+.expenseTable thead th {
+  position: sticky;
+  top: 0;
+  background: inherit;
+  z-index: 1;
+}
 
 .expenseTable th,
 .expenseTable td {
@@ -94,12 +134,7 @@
 
 }
 
-.expenseTable thead th {
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 1;
-}
+
 
 .amountCol {
   text-align: right;
@@ -115,9 +150,14 @@
   background-color: blue;
 }
 
-/* Future Expenses */
-.futureExpenses{
-  display: grid;
+/* Right column */
+.rightColumn{
+  border-style: groove;
+}
+
+.pastDueExpensesInfo {
+  margin-bottom: 16px;
+  color: red
 }
 
 /* sign up form */

@@ -92,6 +92,8 @@ export default function Signup() {
   return (
     <div className="page">
       <main className="content">
+              <h1 className="title">Sign Up</h1>
+
         <form className="signupForm" onSubmit={onSubmit}>
           {errors.form && <div className="errorMessage">{errors.form}</div>}
 
