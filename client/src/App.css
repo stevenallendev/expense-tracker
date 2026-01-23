@@ -5,15 +5,109 @@
   text-align: center;
 }
 
+
 .page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
+body {
+  background-color: lightblue;
+}
+
+body.loginPage {
+  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #0f172a, #1e40af);
+}
+
+
 .content {
   flex: 1;
 }
+
+/* login page  */
+.loginFormContainer {
+  background-color: lightgrey;
+  max-width: 420px;
+  margin: 100px auto;
+  padding: 24px;
+  border-radius: 16px;
+  border-style: groove;
+  border-width: 12px;
+  min-height: 460px;
+}
+
+.authLogo {
+  width: 240px;
+  margin-bottom: 16px;
+}
+
+
+.loginTitle {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.loginForm label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-weight: 600;
+}
+
+.loginForm label span {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #444;
+}
+
+.loginForm input {
+  width: 60%;
+  border-radius: 10px;
+  border: none;
+  padding: 8px;
+  font-size: 16px;
+  margin: 0px auto;
+}
+
+.loginBtn {
+  width: 60%;
+  border-radius: 16px;
+  border: none;
+  padding: 12px 24px;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 12px auto;
+  color: darkblue;
+  background-color: darkgrey;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.loginBtn:hover {
+  background-color: grey;
+  color: blue;
+}
+.signupLinkContainer {
+  padding: 30px;
+}
+
+.signupLinkContainer span {
+  padding: 30px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/*---------------------------------------------*/
 
 .title {
   text-align: center;
@@ -30,21 +124,22 @@
   justify-content: center;
 }
 
-.expenseTitle{
+.expenseTitle {
   background-color: lightblue;
-text-align: left;
+  text-align: left;
 }
 
-.futureExpenseTitle{
+.futureExpenseTitle {
   background-color: lightcoral;
   text-align: left;
 }
 
-.rightSectionTitlesContainer{
+.rightSectionTitlesContainer {
   background-color: lightgray;
   text-align: left;
 }
-.rightSectionTitles{
+
+.rightSectionTitles {
   background-color: lightyellow;
   font-weight: xx-bold;
 }
@@ -90,16 +185,18 @@ text-align: left;
   float: 2;
 }
 
-.filterContainer{
+.filterContainer {
   background-color: skyblue;
 }
-.addExpenseHeader{
+
+.addExpenseHeader {
   background-color: lightgreen;
   font-weight: xxx-bold;
   text-align: left;
 }
-.addExpenseFormContainer{
-background-color: lightpink;
+
+.addExpenseFormContainer {
+  background-color: lightpink;
 }
 
 .expenseTableWrapper {
@@ -151,7 +248,7 @@ background-color: lightpink;
 }
 
 /* Right column */
-.rightColumn{
+.rightColumn {
   border-style: groove;
 }
 
@@ -188,9 +285,10 @@ background-color: lightpink;
 }
 
 .iconButton.edit:hover {
-   background-color: rgba(0, 255, 0, 0.1);
+  background-color: rgba(0, 255, 0, 0.1);
 
 }
+
 .iconButton.delete:hover {
   background-color: rgba(255, 0, 0, 0.1);
 }

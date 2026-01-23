@@ -55,10 +55,10 @@ module.exports = function authRoutes(db) {
         .prepare("SELECT id, password_hash FROM users WHERE email = ?")
         .get(email.trim().toLowerCase());
 
-      if (!user) return res.status(401).json({ error: "Invalid credentials" });
+      if (!user) return res.status(401).json({ error: "Invalid email/password" });
 
       const ok = await bcrypt.compare(password, user.password_hash);
-      if (!ok) return res.status(401).json({ error: "Invalid credentials" });
+      if (!ok) return res.status(401).json({ error: "Invalid email/password" });
 
       req.session.userId = user.id;
       return res.json({ ok: true });

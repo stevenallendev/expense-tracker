@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const API = "http://localhost:4000";
@@ -13,11 +13,14 @@ export default function Signup() {
   const [verifyEmail, setVerifyEmail] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
-  const [errors, setErrors] = useState({});
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  //for email formatting validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 
   function clearFieldError(field) {
-    setErrors((prev) => {
+    setError((prev) => {
       if (!prev[field]) return prev;
       const next = { ...prev };
       delete next[field];
@@ -29,31 +32,32 @@ export default function Signup() {
     e.preventDefault();
 
     // ---- Front-end validation ----
-    const signupErrors = {};
+    const signupError = {};
 
-    if (!username.trim()) signupErrors.username = "Username is required";
-    if (!firstName.trim()) signupErrors.firstName = "First name is required";
-    if (!lastName.trim()) signupErrors.lastName = "Last name is required";
+    if (!username.trim()) return setError("Username is required");
+    if (!firstName.trim()) return setError("First name is required");
+    if (!lastName.trim()) return setError("Last name is required");
 
-    if (!email.trim()) signupErrors.email = "Email is required";
-    if (!verifyEmail.trim()) signupErrors.verifyEmail = "Please verify your email";
-    if (email && verifyEmail && email !== verifyEmail) {
-      signupErrors.verifyEmail = "Emails do not match";
-    }
+    if (!email.trim()) return setError("Email is required");
+    if (!emailRegex.test(email.trim()))
+      return setError("Please enter a valid email (example@domain.com)");
 
-    if (!password) signupErrors.password = "Password is required";
-    if (!verifyPassword) signupErrors.verifyPassword = "Please verify your password";
-    if (password && verifyPassword && password !== verifyPassword) {
-      signupErrors.verifyPassword = "Passwords do not match";
-    }
+    if (!verifyEmail.trim()) return setError("Please verify your email");
+    if (email !== verifyEmail) return setError("Emails do not match");
 
-    if (Object.keys(signupErrors).length > 0) {
-      setErrors(signupErrors);
+    if (!password) return setError("Password is required");
+    if (!verifyPassword) return setError("Please verify your password");
+    if (password !== verifyPassword) return setError("Passwords do not match");
+
+
+    if (Object.keys(signupError).length > 0) {
+      setError(signupError);
       return;
     }
 
-    setErrors({});
+    setError({});
     setLoading(true);
+
 
     // ---- Backend call ----
     try {
@@ -73,9 +77,9 @@ export default function Signup() {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         if (data.field) {
-          setErrors({ [data.field]: data.error });
+          setError({ [data.field]: data.error });
         } else {
-          setErrors({ form: data.error ?? "Signup failed" });
+          setError({ form: data.error ?? "Signup failed" });
         }
         return;
       }
@@ -83,7 +87,7 @@ export default function Signup() {
       // Signup auto-logs in on your backend
       navigate("/login"); // change if your route differs
     } catch {
-      setErrors({ form: "Unable to connect to server" });
+      setError({ form: "Unable to connect to server" });
     } finally {
       setLoading(false);
     }
@@ -92,10 +96,9 @@ export default function Signup() {
   return (
     <div className="page">
       <main className="content">
-              <h1 className="title">Sign Up</h1>
+        <h1 className="title">Sign Up</h1>
 
         <form className="signupForm" onSubmit={onSubmit}>
-          {errors.form && <div className="errorMessage">{errors.form}</div>}
 
           <label>
             Username:
@@ -109,7 +112,6 @@ export default function Signup() {
               }}
               required
             />
-            {errors.username && <span className="fieldError">{errors.username}</span>}
           </label>
 
           <label>
@@ -124,7 +126,6 @@ export default function Signup() {
               }}
               required
             />
-            {errors.firstName && <span className="fieldError">{errors.firstName}</span>}
           </label>
 
           <label>
@@ -139,7 +140,6 @@ export default function Signup() {
               }}
               required
             />
-            {errors.lastName && <span className="fieldError">{errors.lastName}</span>}
           </label>
 
           <label>
@@ -155,7 +155,6 @@ export default function Signup() {
               }}
               required
             />
-            {errors.email && <span className="fieldError">{errors.email}</span>}
           </label>
 
           <label>
@@ -169,7 +168,6 @@ export default function Signup() {
               }}
               required
             />
-            {errors.verifyEmail && <span className="fieldError">{errors.verifyEmail}</span>}
           </label>
 
           <label>
@@ -185,7 +183,6 @@ export default function Signup() {
               }}
               required
             />
-            {errors.password && <span className="fieldError">{errors.password}</span>}
           </label>
 
           <label>
@@ -200,16 +197,14 @@ export default function Signup() {
               }}
               required
             />
-            {errors.verifyPassword && (
-              <span className="fieldError">{errors.verifyPassword}</span>
-            )}
           </label>
 
           <button type="submit" disabled={loading}>
             {loading ? "Submitting..." : "Submit"}
           </button>
-        </form>
+          {error && <div style={{ color: "crimson" }}>{error}</div>}
 
+        </form>
         Already have an account? <Link to="/login">login</Link>
       </main>
     </div>

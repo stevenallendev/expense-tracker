@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "../App.css";
 const API = "http://localhost:4000";
 
 
-export default function Login(){
+export default function Login() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -11,14 +12,27 @@ export default function Login(){
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-async function onSubmit(e) {
+  //for email formatting validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+  //loads login page style on mount for login page only body.LoginPage{}
+  useEffect(() => {
+    document.body.classList.add("loginPage");
+    return () => document.body.classList.remove("loginPage");
+  }, []);
+
+  async function onSubmit(e) {
     e.preventDefault();
 
     if (!email.trim() || !password) {
       setError("Email and password are required.");
       return;
     }
-
+    if (!emailRegex.test(email.trim())) {
+      setError("Please enter a valid email (example@domain.com)");
+      return;
+    }
     setError("");
     setLoading(true);
 
@@ -53,40 +67,56 @@ async function onSubmit(e) {
     <div className="page">
       <main className="content">
 
-        <h1 className="title">Login</h1>
+        <div className="loginFormContainer">
+          <div className="loginHeader">
 
-        <form className="loginForm" onSubmit={onSubmit}>
-          <label>
-            <span>Email</span>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (error) setError("");
-              }}
-              required
-            />
-          </label>
+            <img src="/public/expenseTrackerLogo.png" alt="logo placeholder" className="authLogo" />
 
-          <label>
-            <span>Password</span>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (error) setError("");
-              }}
-              required
-            />
-          </label>
+            <span className="loginTitle">Welcome Back</span>
+            <p>Enter your email and password to continue.</p>
+          </div>
+          <form className="loginForm" onSubmit={onSubmit}>
+            <label>
+              {/* <span>Email: </span> */}
+              <input
+              name="email"
+                placeholder="Enter email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (error) setError("");
+                }}
+                required
+              />
+            </label>
 
-          <button type="submit">Log in</button>
+            <label>
+              {/* <span>Password: </span> */}
+              <input
+              name="password"
+                placeholder="Password"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (error) setError("");
+                }}
+                required
+              />
+            </label>
 
-          {error && <div style={{ color: "crimson" }}>{error}</div>}
-        </form>
-              dont have an account? <Link to="/signup">Sign up</Link>
+            <button className="loginBtn" type="submit">Sign in</button>
+
+            {error && <div style={{ color: "crimson" }}>{error}</div>}
+          </form>
+          <div className="signupLinkContainer">
+            <span>Don't have an account? <Link to="/signup">Sign up</Link></span>
+          </div>
+        </div>
+
       </main>
     </div>
   );
