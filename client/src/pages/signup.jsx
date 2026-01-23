@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "../App.css";
+
 
 const API = "http://localhost:4000";
 
@@ -18,6 +20,11 @@ export default function Signup() {
   //for email formatting validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+
+  useEffect(() => {
+    document.body.classList.add("authPages");
+    return () => document.body.classList.remove("authPages");
+  }, []);
 
   function clearFieldError(field) {
     setError((prev) => {
@@ -96,116 +103,124 @@ export default function Signup() {
   return (
     <div className="page">
       <main className="content">
-        <h1 className="title">Sign Up</h1>
+        <div className="authFormContainer">
 
-        <form className="signupForm" onSubmit={onSubmit}>
+          <div className="authHeader">
+            <img src="/public/expenseTrackerLogo.png" alt="logo placeholder" className="authLogo" />
+            <span className="authTitle">Sign up</span>
+            <p>Sign up for an account to use Expense Tracker</p>
+          </div>
+          <form className="authForm" onSubmit={onSubmit}>
 
-          <label>
-            Username:
-            <input
-              type="text"
-              autoComplete="username"
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-                clearFieldError("username");
-              }}
-              required
-            />
-          </label>
+            <label>
+              <input
+              placeholder="Username"
+                type="text"
+                autoComplete="username"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  clearFieldError("username");
+                }}
+                required
+              />
+            </label>
 
-          <label>
-            First Name:
-            <input
-              type="text"
-              autoComplete="given-name"
-              value={firstName}
-              onChange={(e) => {
-                setFirstName(e.target.value);
-                clearFieldError("firstName");
-              }}
-              required
-            />
-          </label>
+            <label>
+              <input
+              placeholder="First Name"
+                type="text"
+                autoComplete="given-name"
+                value={firstName}
+                onChange={(e) => {
+                  setFirstName(e.target.value);
+                  clearFieldError("firstName");
+                }}
+                required
+              />
+            </label>
 
-          <label>
-            Last Name:
-            <input
-              type="text"
-              autoComplete="family-name"
-              value={lastName}
-              onChange={(e) => {
-                setLastName(e.target.value);
-                clearFieldError("lastName");
-              }}
-              required
-            />
-          </label>
+            <label>
+              <input
+              placeholder="Last Name"
+                type="text"
+                autoComplete="family-name"
+                value={lastName}
+                onChange={(e) => {
+                  setLastName(e.target.value);
+                  clearFieldError("lastName");
+                }}
+                required
+              />
+            </label>
 
-          <label>
-            E-Mail:
-            <input
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                clearFieldError("email");
-                clearFieldError("verifyEmail");
-              }}
-              required
-            />
-          </label>
+            <label>
+              <input
+              placeholder="Email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  clearFieldError("email");
+                  clearFieldError("verifyEmail");
+                }}
+                required
+              />
+            </label>
 
-          <label>
-            Verify E-Mail:
-            <input
-              type="email"
-              value={verifyEmail}
-              onChange={(e) => {
-                setVerifyEmail(e.target.value);
-                clearFieldError("verifyEmail");
-              }}
-              required
-            />
-          </label>
+            <label>
+              <input
+              placeholder="Verify email"
+                type="email"
+                value={verifyEmail}
+                onChange={(e) => {
+                  setVerifyEmail(e.target.value);
+                  clearFieldError("verifyEmail");
+                }}
+                required
+              />
+            </label>
 
-          <label>
-            Password:
-            <input
-              type="password"
-              autoComplete="new-password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                clearFieldError("password");
-                clearFieldError("verifyPassword");
-              }}
-              required
-            />
-          </label>
+            <label>
+              <input
+              placeholder="Password"
+                type="password"
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  clearFieldError("password");
+                  clearFieldError("verifyPassword");
+                }}
+                required
+              />
+            </label>
 
-          <label>
-            Verify Password:
-            <input
-              type="password"
-              autoComplete="new-password"
-              value={verifyPassword}
-              onChange={(e) => {
-                setVerifyPassword(e.target.value);
-                clearFieldError("verifyPassword");
-              }}
-              required
-            />
-          </label>
+            <label>
+              <input
+              placeholder="Verify password"
+                type="password"
+                autoComplete="new-password"
+                value={verifyPassword}
+                onChange={(e) => {
+                  setVerifyPassword(e.target.value);
+                  clearFieldError("verifyPassword");
+                }}
+                required
+              />
+            </label>
+            {error && <div className="errorMessage">{error}</div>}
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Submitting..." : "Submit"}
-          </button>
-          {error && <div style={{ color: "crimson" }}>{error}</div>}
+            <button className="authBtn" type="submit" disabled={loading}>
+              {loading ? "Submitting..." : "Submit"}
+            </button>
 
-        </form>
-        Already have an account? <Link to="/login">login</Link>
+          </form>
+          <div className="authLinkContainer">
+           <span>Already have an account? <Link to="/login">login</Link></span>
+          </div>
+        </div>
       </main>
     </div>
   );

@@ -16,7 +16,7 @@ body {
   background-color: lightblue;
 }
 
-body.loginPage {
+body.authPages{
   min-height: 100vh;
   margin: 0;
   background: linear-gradient(135deg, #0f172a, #1e40af);
@@ -27,8 +27,15 @@ body.loginPage {
   flex: 1;
 }
 
+
+.errorMessage {
+  color: crimson;
+  width: 100%;
+  font-weight: bold;
+}
+
 /* login page  */
-.loginFormContainer {
+.authFormContainer {
   background-color: lightgrey;
   max-width: 420px;
   margin: 100px auto;
@@ -41,36 +48,37 @@ body.loginPage {
 
 .authLogo {
   width: 240px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 
-.loginTitle {
+.authTitle {
   font-size: 48px;
   font-weight: bold;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+  display: block;
 }
 
-.loginForm {
+.authForm {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
-.loginForm label {
+.authForm label {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   font-weight: 600;
 }
 
-.loginForm label span {
+.authForm label span {
   margin-bottom: 6px;
   font-size: 14px;
   color: #444;
 }
 
-.loginForm input {
+.authForm input {
   width: 60%;
   border-radius: 10px;
   border: none;
@@ -79,7 +87,7 @@ body.loginPage {
   margin: 0px auto;
 }
 
-.loginBtn {
+.authBtn {
   width: 60%;
   border-radius: 16px;
   border: none;
@@ -93,15 +101,15 @@ body.loginPage {
   transition: all 0.25s ease;
 }
 
-.loginBtn:hover {
+.authhover {
   background-color: grey;
   color: blue;
 }
-.signupLinkContainer {
+.authLinkContainer {
   padding: 30px;
 }
 
-.signupLinkContainer span {
+.authLinkContainer span {
   padding: 30px;
   font-size: 20px;
   font-weight: bold;
@@ -241,11 +249,6 @@ body.loginPage {
   background-color: green;
 }
 
-.errorMessage {
-  color: crimson;
-  width: 100%;
-  background-color: blue;
-}
 
 /* Right column */
 .rightColumn {

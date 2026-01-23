@@ -11,24 +11,21 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
   //for email formatting validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 
   //loads login page style on mount for login page only body.LoginPage{}
   useEffect(() => {
-    document.body.classList.add("loginPage");
-    return () => document.body.classList.remove("loginPage");
+    document.body.classList.add("authPages");
+    return () => document.body.classList.remove("authPages");
   }, []);
 
   async function onSubmit(e) {
     e.preventDefault();
 
-    if (!email.trim() || !password) {
-      setError("Email and password are required.");
-      return;
-    }
+    if (!email.trim()) return setError("Email is required");
+    if (!password) return setError("Password is required");
     if (!emailRegex.test(email.trim())) {
       setError("Please enter a valid email (example@domain.com)");
       return;
@@ -67,35 +64,31 @@ export default function Login() {
     <div className="page">
       <main className="content">
 
-        <div className="loginFormContainer">
-          <div className="loginHeader">
+        <div className="authFormContainer">
+          <div className="authHeader">
 
             <img src="/public/expenseTrackerLogo.png" alt="logo placeholder" className="authLogo" />
 
-            <span className="loginTitle">Welcome Back</span>
+            <span className="authTitle">Welcome Back</span>
             <p>Enter your email and password to continue.</p>
           </div>
-          <form className="loginForm" onSubmit={onSubmit}>
+          <form noValidate className="authForm" onSubmit={onSubmit}>
             <label>
-              {/* <span>Email: </span> */}
               <input
-              name="email"
+                name="email"
                 placeholder="Enter email"
                 type="email"
                 autoComplete="email"
-                value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   if (error) setError("");
                 }}
-                required
               />
             </label>
 
             <label>
-              {/* <span>Password: </span> */}
               <input
-              name="password"
+                name="password"
                 placeholder="Password"
                 type="password"
                 autoComplete="current-password"
@@ -104,15 +97,16 @@ export default function Login() {
                   setPassword(e.target.value);
                   if (error) setError("");
                 }}
-                required
               />
             </label>
+            {error && <div className="errorMessage">{error}</div>}
 
-            <button className="loginBtn" type="submit">Sign in</button>
+            <button className="authBtn" type="submit">
+            {loading ? "Signing in..." : "Sign in"}
+            </button>
 
-            {error && <div style={{ color: "crimson" }}>{error}</div>}
           </form>
-          <div className="signupLinkContainer">
+          <div className="authLinkContainer">
             <span>Don't have an account? <Link to="/signup">Sign up</Link></span>
           </div>
         </div>
