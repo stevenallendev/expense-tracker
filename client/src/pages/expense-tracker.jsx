@@ -293,19 +293,7 @@ export default function Tracker() {
     }
   }
 
-  async function onLogout() {
-    setLoggingOut(true);
-    setError("");
 
-    try {
-      await fetch(`${API}/api/logout`, { method: "POST", credentials: "include" });
-    } catch {
-      // ignore
-    } finally {
-      setLoggingOut(false);
-      navigate("/login");
-    }
-  }
 
   // -----------------------------
   // Effects
@@ -328,16 +316,7 @@ export default function Tracker() {
 
   useEffect(() => {
     loadExpenses();
-  }, []); // keep as-is for now
-
-  // -----------------------------
-  // return (...) comes next
-  // -----------------------------
-
-
-
-
-
+  }, []);
 
 
   //dynamically change "total" label when filtering
@@ -355,33 +334,16 @@ export default function Tracker() {
 
 
 
-
-
-
-
   return (
     <main className="content">
-      {user && (
-        <p className="welcomeText">
-          Welcome, <strong>{user.username} </strong>
-          <button
-            type="button"
-            className="logoutBtn"
-            onClick={onLogout}
-            disabled={loggingOut}
-          >
-            {loggingOut ? "Logging out..." : "Logout"}
-          </button>
-        </p>
-      )}
+      <p className="title">Title Here</p>
 
       {/* ===================== LEFT COLUMN ===================== */}
 
       <div className="expenseSection">
         <div className="leftColumn">
-          {/* Add Expense */}
           <section className="expenseFormContainer">
-            <div className="expenseTitle">
+            <div className="columnTitlesContainer">
               <span className="columnTitles">Expenses</span>
             </div>
 
@@ -444,11 +406,8 @@ export default function Tracker() {
                     />
                   </label>
 
-                  <div className="addExpenseActions">
-                    <button className="addExpenseBtn" type="submit" disabled={saving}>
-                      {saving ? "Saving..." : "Add Expense"}
-                    </button>
-
+                  <div className="addExpenseBtnContainer">
+                    
                     <button
                       type="button"
                       className="cancelAddBtn"
@@ -457,6 +416,11 @@ export default function Tracker() {
                     >
                       Cancel
                     </button>
+                    <button className="addExpenseBtn" type="submit" disabled={saving}>
+                      {saving ? "Saving..." : "Add Expense"}
+                    </button>
+
+                    
                   </div>
 
 
@@ -471,54 +435,60 @@ export default function Tracker() {
           {/* Paid Expenses Table (LEFT) */}
           <section className="expenseDataContainer">
             <div className="filterContainer">
-              {/* Filters */}
-              Search:{" "}
-              <select
-                value={month}
-                onChange={(e) => setMonth(e.target.value)}
-                disabled={!year}
-              >
-                <option value="">Month</option>
-                {months.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>{" "}
-              <select value={year} onChange={(e) => setYear(e.target.value)}>
-                <option value="">Year</option>
-                {yearOptions.map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </select>{" "}
-              <button
-                type="button"
-                onClick={() => {
-                  setCategoryFilter("All");
-                  setMonth("");
-                  setYear("");
-                }}
-              >
-                Clear
-              </button>
-
-              <label>
-                <br />
-                <span>Filter by category</span>
+              <div className="filterRow">
+                <span>Search:{" "}</span>
                 <select
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  value={month}
+                  onChange={(e) => setMonth(e.target.value)}
+                  disabled={!year}
                 >
-                  <option value="All">All</option>
-                  {categories.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
+                  <option value="">Month</option>
+                  {months.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
                     </option>
                   ))}
-                </select>
-              </label>
+                </select>{" "}
+                <select value={year} onChange={(e) => setYear(e.target.value)}>
+                  <option value="">Year</option>
+                  {yearOptions.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCategoryFilter("All");
+                    setMonth("");
+                    setYear("");
+                  }}
+                >
+                  Clear
+                </button>
+              </div>
+              <div className="filterRow">
+                <label>
+                  <span>Filter by category</span>
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                  >
+                    <option value="All">All</option>
+                    {categories.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="totalsContainer">
+            <p>
+              {totalLabel} ${totalDollars}
+            </p>
+            </div>
             </div>
             {loading ? (
               <p>Loading...</p>
@@ -657,21 +627,18 @@ export default function Tracker() {
               </div>
             )}
 
-            <br />
-            <p>
-              {totalLabel} ${totalDollars}
-            </p>
           </section>
         </div>
 
         {/* ===================== RIGHT COLUMN ===================== */}
-        
+
         <aside className="rightColumn">
-         <div className="futureExpenseTitle">
-              <span className="columnTitles">Future Expenses</span>
-            </div>
-            <div className="rightSectionTitlesContainer">
-          <span className="rightSectionTitles">Due Soon</span>
+          <div className="columnTitlesContainer">
+            <span className="columnTitles">Future Expenses</span>
+          </div>
+          <div className="rightSection">
+          <div className="rightSectionTitlesContainer">
+            <span className="rightSectionTitles">Due Soon</span>
           </div>
           {pastDueUnpaid.length === 0 ? (
             <p>None.</p>
@@ -803,8 +770,10 @@ export default function Tracker() {
               </table>
             </div>
           )}
+          </div>
+          <div className="rightSection">
           <div className="rightSectionTitlesContainer">
-          <span className="rightSectionTitles">Upcoming</span>
+            <span className="rightSectionTitles">Upcoming</span>
           </div>
           {upcomingUnpaid.length === 0 ? (
             <p>No upcoming.</p>
@@ -936,6 +905,7 @@ export default function Tracker() {
               </table>
             </div>
           )}
+          </div>
         </aside>
       </div>
     </main>

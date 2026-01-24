@@ -73,7 +73,7 @@ module.exports = function authRoutes(db) {
     if (!req.session?.userId) return res.status(401).json({ error: "Not logged in" });
 
     const user = db
-      .prepare("SELECT id, username, email FROM users WHERE id = ?")
+      .prepare("SELECT id, username, first_name, last_name, email FROM users WHERE id = ?")
       .get(req.session.userId);
 
     if (!user) return res.status(401).json({ error: "Not logged in" });

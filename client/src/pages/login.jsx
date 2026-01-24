@@ -67,7 +67,7 @@ export default function Login() {
         <div className="authFormContainer">
           <div className="authHeader">
 
-            <img src="/public/expenseTrackerLogo.png" alt="logo placeholder" className="authLogo" />
+            <img src="/expenseTrackerLogo.png" alt="logo placeholder" className="authLogo" />
 
             <span className="authTitle">Welcome Back</span>
             <p>Enter your email and password to continue.</p>
@@ -76,9 +76,10 @@ export default function Login() {
             <label>
               <input
                 name="email"
-                placeholder="Enter email"
+                placeholder="Email"
                 type="email"
                 autoComplete="email"
+                value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   if (error) setError("");
@@ -102,7 +103,7 @@ export default function Login() {
             {error && <div className="errorMessage">{error}</div>}
 
             <button className="authBtn" type="submit">
-            {loading ? "Signing in..." : "Sign in"}
+              {loading ? "Signing in..." : "Sign in"}
             </button>
 
           </form>

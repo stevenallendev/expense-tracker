@@ -4,10 +4,12 @@ import { Outlet } from "react-router-dom";
 
 export default function TrackerLayout() {
   return (
-    <div className="page">
+    <>
       <Navbar />
-      <Outlet />
+      <main className="content">
+        <Outlet />
+      </main>
       <Footer />
-    </div>
+    </>
   );
 }

@@ -106,11 +106,11 @@ export default function Signup() {
         <div className="authFormContainer">
 
           <div className="authHeader">
-            <img src="/public/expenseTrackerLogo.png" alt="logo placeholder" className="authLogo" />
+            <img src="/expenseTrackerLogo.png" alt="logo placeholder" className="authLogo" />
             <span className="authTitle">Sign up</span>
             <p>Sign up for an account to use Expense Tracker</p>
           </div>
-          <form className="authForm" onSubmit={onSubmit}>
+          <form noValidate className="authForm" onSubmit={onSubmit}>
 
             <label>
               <input
@@ -120,9 +120,8 @@ export default function Signup() {
                 value={username}
                 onChange={(e) => {
                   setUsername(e.target.value);
-                  clearFieldError("username");
+                  if (error) setError("");
                 }}
-                required
               />
             </label>
 
@@ -134,9 +133,8 @@ export default function Signup() {
                 value={firstName}
                 onChange={(e) => {
                   setFirstName(e.target.value);
-                  clearFieldError("firstName");
+                 if (error) setError("");
                 }}
-                required
               />
             </label>
 
@@ -148,9 +146,9 @@ export default function Signup() {
                 value={lastName}
                 onChange={(e) => {
                   setLastName(e.target.value);
-                  clearFieldError("lastName");
+                 if (error) setError("");
                 }}
-                required
+               
               />
             </label>
 
@@ -162,10 +160,9 @@ export default function Signup() {
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
-                  clearFieldError("email");
-                  clearFieldError("verifyEmail");
+                 if (error) setError("");
                 }}
-                required
+              
               />
             </label>
 
@@ -176,9 +173,9 @@ export default function Signup() {
                 value={verifyEmail}
                 onChange={(e) => {
                   setVerifyEmail(e.target.value);
-                  clearFieldError("verifyEmail");
+                  if (error) setError("");
                 }}
-                required
+                
               />
             </label>
 
@@ -190,10 +187,9 @@ export default function Signup() {
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
-                  clearFieldError("password");
-                  clearFieldError("verifyPassword");
+                  if (error) setError("");
                 }}
-                required
+             
               />
             </label>
 
@@ -205,9 +201,9 @@ export default function Signup() {
                 value={verifyPassword}
                 onChange={(e) => {
                   setVerifyPassword(e.target.value);
-                  clearFieldError("verifyPassword");
+                  if (error) setError("");
                 }}
-                required
+               
               />
             </label>
             {error && <div className="errorMessage">{error}</div>}

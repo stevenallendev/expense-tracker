@@ -1,8 +1,11 @@
 export default function Footer() {
   return (
- <div>
-      <div className="footerTemp">this is where the footer goes</div>
-</div>
-    
+    <footer className="footer">
+      <div className="footerContent">
+        <span>© {new Date().getFullYear()} ExpenseTracker</span>
+        <span className="footerRight">Built by You 💻</span>
+      </div>
+    </footer>
+
   );
 }
