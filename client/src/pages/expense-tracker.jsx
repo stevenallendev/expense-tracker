@@ -20,6 +20,9 @@ export default function Tracker() {
 
   // Toggle Add Expense form
   const [showAddForm, setShowAddForm] = useState(false);
+  // Toggle decription expansion
+  const [expandedId, setExpandedId] = useState(null);
+
 
   // Data and status
   const [expenses, setExpenses] = useState([]);
@@ -293,7 +296,17 @@ export default function Tracker() {
     }
   }
 
+  // Toggle description expansion
+  function toggleExpanded(id) {
+    setExpandedId(prev => (prev === id ? null : id));
+  }
 
+  function truncateText(text, maxLength = 25) {
+    if (!text) return "";
+    return text.length > maxLength
+      ? text.slice(0, maxLength) + "…"
+      : text;
+  }
 
   // -----------------------------
   // Effects
@@ -407,7 +420,7 @@ export default function Tracker() {
                   </label>
 
                   <div className="addExpenseBtnContainer">
-                    
+
                     <button
                       type="button"
                       className="cancelAddBtn"
@@ -420,7 +433,7 @@ export default function Tracker() {
                       {saving ? "Saving..." : "Add Expense"}
                     </button>
 
-                    
+
                   </div>
 
 
@@ -485,10 +498,10 @@ export default function Tracker() {
                 </label>
               </div>
               <div className="totalsContainer">
-            <p>
-              {totalLabel} ${totalDollars}
-            </p>
-            </div>
+                <p>
+                  {totalLabel} ${totalDollars}
+                </p>
+              </div>
             </div>
             {loading ? (
               <p>Loading...</p>
@@ -581,7 +594,18 @@ export default function Tracker() {
                         <tr key={e.id}>
                           <td>{formatMMDDYYYY(e.date)}</td>
                           <td>{e.category}</td>
-                          <td>{e.description}</td>
+                          <td
+                            className="descriptionColumn"
+                            onClick={() => toggleExpanded(e.id)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <span className="descriptionText">{truncateText(e.description, 11)}</span>
+                            {expandedId === e.id && (
+                              <div className="descriptionDropdown">
+                                {e.description}
+                              </div>
+                            )}
+                          </td>
                           <td className="amountCol">
                             ${(e.amount_cents / 100).toFixed(2)}
                           </td>
@@ -637,274 +661,274 @@ export default function Tracker() {
             <span className="columnTitles">Future Expenses</span>
           </div>
           <div className="rightSection">
-          <div className="rightSectionTitlesContainer">
-            <span className="rightSectionTitles">Due Soon</span>
-          </div>
-          {pastDueUnpaid.length === 0 ? (
-            <p>None.</p>
-          ) : (
-            <div className="expenseTableWrapper">
-              <table className="expenseTable">
-                <thead>
-                  <tr className="expenseTableTitles">
-                    <th>Date</th>
-                    <th>Category</th>
-                    <th>Description</th>
-                    <th className="amountCol">Amount</th>
-                    <th></th>
-                  </tr>
-                </thead>
-
-                <tbody className="pastDueExpensesInfo">
-                  {pastDueUnpaid.map((e) =>
-                    isEditing(e) ? (
-                      <tr key={e.id}>
-                        <td>
-                          <input
-                            type="date"
-                            value={editDate}
-                            onChange={(ev) => setEditDate(ev.target.value)}
-                          />
-                        </td>
-
-                        <td>
-                          <select
-                            value={editCategory}
-                            onChange={(ev) => setEditCategory(ev.target.value)}
-                          >
-                            {categories.map((c) => (
-                              <option key={c} value={c}>
-                                {c}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-
-                        <td>
-                          <input
-                            value={editDescription}
-                            onChange={(ev) => {
-                              setEditDescription(ev.target.value);
-                              if (error) setError("");
-                            }}
-                            placeholder="Lunch, Netflix, etc."
-                          />
-                        </td>
-
-                        <td className="amountCol">
-                          <input
-                            value={editAmount}
-                            onChange={(ev) => setEditAmount(ev.target.value)}
-                            placeholder="12.99"
-                          />
-                        </td>
-
-                        <td className="actions">
-                          <button
-                            className="iconButton"
-                            onClick={() => saveEdit(e.id)}
-                            disabled={updating}
-                            title="Save"
-                            aria-label="Save"
-                            type="button"
-                          >
-                            💾
-                          </button>
-
-                          <button
-                            className="iconButton"
-                            onClick={cancelEdit}
-                            disabled={updating}
-                            title="Cancel"
-                            aria-label="Cancel"
-                            type="button"
-                          >
-                            ✖️
-                          </button>
-                        </td>
-                      </tr>
-                    ) : (
-                      <tr key={e.id} className="futureItem due">
-                        <td>{formatMMDDYYYY(e.date)}</td>
-                        <td>{e.category}</td>
-                        <td>{e.description}</td>
-                        <td className="amountCol">
-                          ${(e.amount_cents / 100).toFixed(2)}
-                        </td>
-
-                        <td className="actions">
-                          <button
-                            className="iconButton edit"
-                            onClick={() => startEdit(e)}
-                            disabled={isLocked(e)}
-                            type="button"
-                            title="Edit"
-                          >
-                            ✏️
-                          </button>
-
-                          <button
-                            className="iconButton delete"
-                            onClick={() => onDelete(e.id)}
-                            disabled={isLocked(e)}
-                            type="button"
-                            title="Delete"
-                          >
-                            🗑️
-                          </button>
-
-                          <button
-                            type="button"
-                            title="Mark paid"
-                            className="iconButton markPaidBtn"
-                            onClick={() => setPaid(e.id, true)}
-                            disabled={isLocked(e)}
-                          >
-                            💲
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  )}
-                </tbody>
-              </table>
+            <div className="rightSectionTitlesContainer">
+              <span className="rightSectionTitles">Due Soon</span>
             </div>
-          )}
+            {pastDueUnpaid.length === 0 ? (
+              <p>None.</p>
+            ) : (
+              <div className="expenseTableWrapper">
+                <table className="expenseTable">
+                  <thead>
+                    <tr className="expenseTableTitles">
+                      <th>Date</th>
+                      <th>Category</th>
+                      <th>Description</th>
+                      <th className="amountCol">Amount</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="pastDueExpensesInfo">
+                    {pastDueUnpaid.map((e) =>
+                      isEditing(e) ? (
+                        <tr key={e.id}>
+                          <td>
+                            <input
+                              type="date"
+                              value={editDate}
+                              onChange={(ev) => setEditDate(ev.target.value)}
+                            />
+                          </td>
+
+                          <td>
+                            <select
+                              value={editCategory}
+                              onChange={(ev) => setEditCategory(ev.target.value)}
+                            >
+                              {categories.map((c) => (
+                                <option key={c} value={c}>
+                                  {c}
+                                </option>
+                              ))}
+                            </select>
+                          </td>
+
+                          <td>
+                            <input
+                              value={editDescription}
+                              onChange={(ev) => {
+                                setEditDescription(ev.target.value);
+                                if (error) setError("");
+                              }}
+                              placeholder="Lunch, Netflix, etc."
+                            />
+                          </td>
+
+                          <td className="amountCol">
+                            <input
+                              value={editAmount}
+                              onChange={(ev) => setEditAmount(ev.target.value)}
+                              placeholder="12.99"
+                            />
+                          </td>
+
+                          <td className="actions">
+                            <button
+                              className="iconButton"
+                              onClick={() => saveEdit(e.id)}
+                              disabled={updating}
+                              title="Save"
+                              aria-label="Save"
+                              type="button"
+                            >
+                              💾
+                            </button>
+
+                            <button
+                              className="iconButton"
+                              onClick={cancelEdit}
+                              disabled={updating}
+                              title="Cancel"
+                              aria-label="Cancel"
+                              type="button"
+                            >
+                              ✖️
+                            </button>
+                          </td>
+                        </tr>
+                      ) : (
+                        <tr key={e.id} className="futureItem due">
+                          <td>{formatMMDDYYYY(e.date)}</td>
+                          <td>{e.category}</td>
+                          <td>{e.description}</td>
+                          <td className="amountCol">
+                            ${(e.amount_cents / 100).toFixed(2)}
+                          </td>
+
+                          <td className="actions">
+                            <button
+                              className="iconButton edit"
+                              onClick={() => startEdit(e)}
+                              disabled={isLocked(e)}
+                              type="button"
+                              title="Edit"
+                            >
+                              ✏️
+                            </button>
+
+                            <button
+                              className="iconButton delete"
+                              onClick={() => onDelete(e.id)}
+                              disabled={isLocked(e)}
+                              type="button"
+                              title="Delete"
+                            >
+                              🗑️
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Mark paid"
+                              className="iconButton markPaidBtn"
+                              onClick={() => setPaid(e.id, true)}
+                              disabled={isLocked(e)}
+                            >
+                              💲
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
           <div className="rightSection">
-          <div className="rightSectionTitlesContainer">
-            <span className="rightSectionTitles">Upcoming</span>
-          </div>
-          {upcomingUnpaid.length === 0 ? (
-            <p>No upcoming.</p>
-          ) : (
-            <div className="expenseTableWrapper">
-              <table className="expenseTable">
-                <thead>
-                  <tr className="expenseTableTitles">
-                    <th>Date</th>
-                    <th>Category</th>
-                    <th>Description</th>
-                    <th className="amountCol">Amount</th>
-                    <th></th>
-                  </tr>
-                </thead>
-
-                <tbody className="upcomingInfo">
-                  {upcomingUnpaid.map((e) =>
-                    isEditing(e) ? (
-                      <tr key={e.id}>
-                        <td>
-                          <input
-                            type="date"
-                            value={editDate}
-                            onChange={(ev) => setEditDate(ev.target.value)}
-                          />
-                        </td>
-
-                        <td>
-                          <select
-                            value={editCategory}
-                            onChange={(ev) => setEditCategory(ev.target.value)}
-                          >
-                            {categories.map((c) => (
-                              <option key={c} value={c}>
-                                {c}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-
-                        <td>
-                          <input
-                            value={editDescription}
-                            onChange={(ev) => {
-                              setEditDescription(ev.target.value);
-                              if (error) setError("");
-                            }}
-                            placeholder="Lunch, Netflix, etc."
-                          />
-                        </td>
-
-                        <td className="amountCol">
-                          <input
-                            value={editAmount}
-                            onChange={(ev) => setEditAmount(ev.target.value)}
-                            placeholder="12.99"
-                          />
-                        </td>
-
-                        <td className="actions">
-                          <button
-                            className="iconButton"
-                            onClick={() => saveEdit(e.id)}
-                            disabled={updating}
-                            title="Save"
-                            aria-label="Save"
-                            type="button"
-                          >
-                            💾
-                          </button>
-
-                          <button
-                            className="iconButton"
-                            onClick={cancelEdit}
-                            disabled={updating}
-                            title="Cancel"
-                            aria-label="Cancel"
-                            type="button"
-                          >
-                            ✖️
-                          </button>
-                        </td>
-                      </tr>
-                    ) : (
-                      <tr key={e.id} className="futureItem">
-                        <td>{formatMMDDYYYY(e.date)}</td>
-                        <td>{e.category}</td>
-                        <td>{e.description}</td>
-                        <td className="amountCol">
-                          ${(e.amount_cents / 100).toFixed(2)}
-                        </td>
-
-                        <td className="actions">
-                          <button
-                            className="iconButton edit"
-                            onClick={() => startEdit(e)}
-                            disabled={isLocked(e)}
-                            type="button"
-                            title="Edit"
-                          >
-                            ✏️
-                          </button>
-
-                          <button
-                            className="iconButton delete"
-                            onClick={() => onDelete(e.id)}
-                            disabled={isLocked(e)}
-                            type="button"
-                            title="Delete"
-                          >
-                            🗑️
-                          </button>
-
-                          <button
-                            type="button"
-                            title="Mark paid"
-                            className="iconButton markPaidBtn"
-                            onClick={() => setPaid(e.id, true)}
-                            disabled={isLocked(e)}
-                          >
-                            💲
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  )}
-                </tbody>
-              </table>
+            <div className="rightSectionTitlesContainer">
+              <span className="rightSectionTitles">Upcoming</span>
             </div>
-          )}
+            {upcomingUnpaid.length === 0 ? (
+              <p>No upcoming.</p>
+            ) : (
+              <div className="expenseTableWrapper">
+                <table className="expenseTable">
+                  <thead>
+                    <tr className="expenseTableTitles">
+                      <th>Date</th>
+                      <th>Category</th>
+                      <th>Description</th>
+                      <th className="amountCol">Amount</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="upcomingInfo">
+                    {upcomingUnpaid.map((e) =>
+                      isEditing(e) ? (
+                        <tr key={e.id}>
+                          <td>
+                            <input
+                              type="date"
+                              value={editDate}
+                              onChange={(ev) => setEditDate(ev.target.value)}
+                            />
+                          </td>
+
+                          <td>
+                            <select
+                              value={editCategory}
+                              onChange={(ev) => setEditCategory(ev.target.value)}
+                            >
+                              {categories.map((c) => (
+                                <option key={c} value={c}>
+                                  {c}
+                                </option>
+                              ))}
+                            </select>
+                          </td>
+
+                          <td>
+                            <input
+                              value={editDescription}
+                              onChange={(ev) => {
+                                setEditDescription(ev.target.value);
+                                if (error) setError("");
+                              }}
+                              placeholder="Lunch, Netflix, etc."
+                            />
+                          </td>
+
+                          <td className="amountCol">
+                            <input
+                              value={editAmount}
+                              onChange={(ev) => setEditAmount(ev.target.value)}
+                              placeholder="12.99"
+                            />
+                          </td>
+
+                          <td className="actions">
+                            <button
+                              className="iconButton"
+                              onClick={() => saveEdit(e.id)}
+                              disabled={updating}
+                              title="Save"
+                              aria-label="Save"
+                              type="button"
+                            >
+                              💾
+                            </button>
+
+                            <button
+                              className="iconButton"
+                              onClick={cancelEdit}
+                              disabled={updating}
+                              title="Cancel"
+                              aria-label="Cancel"
+                              type="button"
+                            >
+                              ✖️
+                            </button>
+                          </td>
+                        </tr>
+                      ) : (
+                        <tr key={e.id} className="futureItem">
+                          <td>{formatMMDDYYYY(e.date)}</td>
+                          <td>{e.category}</td>
+                          <td>{e.description}</td>
+                          <td className="amountCol">
+                            ${(e.amount_cents / 100).toFixed(2)}
+                          </td>
+
+                          <td className="actions">
+                            <button
+                              className="iconButton edit"
+                              onClick={() => startEdit(e)}
+                              disabled={isLocked(e)}
+                              type="button"
+                              title="Edit"
+                            >
+                              ✏️
+                            </button>
+
+                            <button
+                              className="iconButton delete"
+                              onClick={() => onDelete(e.id)}
+                              disabled={isLocked(e)}
+                              type="button"
+                              title="Delete"
+                            >
+                              🗑️
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Mark paid"
+                              className="iconButton markPaidBtn"
+                              onClick={() => setPaid(e.id, true)}
+                              disabled={isLocked(e)}
+                            >
+                              💲
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </aside>
       </div>

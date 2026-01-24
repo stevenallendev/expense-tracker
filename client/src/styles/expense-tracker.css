@@ -1,190 +1,25 @@
-/* Global Styles */
+/* Variables */
+:root {
+  --tracker-title-bars: linear-gradient(to bottom, rgba(245, 246, 248, 1), rgba(225, 228, 232, 1));
+  --tracker-categories-bg: red;
+  --tracker-filter-container-bg: orange;
+  --tracker-subtitle-bar-bg: orange;
+  --tracker-filler-bg: aquamarine;
+  --tracker-add-expense-form-bg: orange;
+  --tracker-add-expense-header-bg: orange;
+  --tracker-add-expense-btn-container-bg: orange;
+  --tracker-expense-table-titles-bg: orange;
 
-*{
-  box-sizing: border-box;
-}
+  --tracker-column-left-bg: lightgreen;
+  --tracker-column-right-bg: lightyellow;
+  --tracker-expense-table-bg: aquamarine;
 
-#root {
-  text-align: center;
-}
-
-
-.page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-html,
-body,
-#root {
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  background-color: lightblue;
-  margin: 0;
-}
-
-body.authPages {
-  min-height: 100vh;
-  margin: 0;
-  background: linear-gradient(135deg, #0f172a, #1e40af);
-}
-
-
-.content {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 24px;
-  flex: 1;
-}
-
-
-.errorMessage {
-  color: crimson;
-  width: 100%;
-  font-weight: bold;
-}
-
-
-/*Navbar*/
-
-.navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 64px;
-  padding: 0 32px;
-  background: linear-gradient(135deg, #1e40af, #2563eb);
-  color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.navbarLeft {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-.navbarLogo {
-  height: 55px;
-}
-
-.navbarRight {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-/* Footer */
-.footer {
-  width: 100%;
-  background: #1e3a8a;
-  color: rgba(255, 255, 255, 0.85);
-  padding: 18px 32px;
-  margin-top: 40px;
-}
-
-.footerContent {
-  max-width: 1100px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-}
-
-.footerRight {
-  opacity: 0.7;
 }
 
 
 
 
 
-/* auth pages  */
-.authFormContainer {
-  background-color: lightgrey;
-  max-width: 420px;
-  margin: 100px auto;
-  padding: 24px;
-  border-radius: 16px;
-  border-style: groove;
-  border-width: 12px;
-  min-height: 460px;
-}
-
-.authLogo {
-  width: 240px;
-  margin-bottom: 8px;
-}
-
-
-.authTitle {
-  font-size: 48px;
-  font-weight: bold;
-  margin-bottom: 16px;
-  display: block;
-}
-
-.authForm {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.authForm label {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  font-weight: 600;
-}
-
-.authForm label span {
-  margin-bottom: 6px;
-  font-size: 14px;
-  color: #444;
-}
-
-.authForm input {
-  width: 60%;
-  border-radius: 10px;
-  border: none;
-  padding: 8px;
-  font-size: 16px;
-  margin: 0px auto;
-}
-
-.authBtn {
-  width: 60%;
-  border-radius: 16px;
-  border: none;
-  padding: 12px 24px;
-  font-size: 20px;
-  font-weight: bold;
-  margin: 12px auto;
-  color: darkblue;
-  background-color: darkgrey;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.authhover {
-  background-color: grey;
-  color: blue;
-}
-
-.authLinkContainer {
-  padding: 30px;
-}
-
-.authLinkContainer span {
-  padding: 30px;
-  font-size: 20px;
-  font-weight: bold;
-}
 
 /*expense tracker main */
 .expenseSection {
@@ -195,21 +30,27 @@ body.authPages {
 
 .leftColumn,
 .rightColumn {
- flex:1;
- min-width: 0;
- background-color: aquamarine;
+  flex: 1;
+  min-width: 0;
 }
 
-.rightColumn{
-  display:flex;
+.leftColumn {
+  display: flex;
   flex-direction: column;
+  background: var(--tracker-column-left-bg);
 }
-.rightSection{
-  flex:1;
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  background: var(--tracker-column-right-bg);
+}
+
+.rightSection {
+  flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
-background-color: aquamarine;
 }
 
 .title {
@@ -226,23 +67,23 @@ background-color: aquamarine;
 
 .columnTitlesContainer {
   padding: 12px;
-  background-color: lightpink
+  background: var(--tracker-title-bars);
 }
 
 .addExpenseHeader {
-  background-color: lightgreen;
+  background: var(--tracker-add-expense-header-bg);
   font-weight: xxx-bold;
   text-align: left;
   padding: 12px;
 }
 
 .addExpenseFormContainer {
-  background-color: lightpink;
+  background: var(--tracker-add-expense-form-bg);
   padding: 12px;
 }
 
 .filterContainer {
-  background-color: skyblue;
+  background: var(--tracker-filter-container-bg);
   display: flex;
   align-items: flex-start;
   gap: 8px;
@@ -264,7 +105,7 @@ background-color: aquamarine;
   width: 100%;
   display: flex;
   justify-content: flex-end;
-  background-color: lightpink;
+  background: var(--tracker-add-expense-btn-container-bg);
   gap: 8px;
 }
 
@@ -279,6 +120,7 @@ background-color: aquamarine;
   cursor: pointer;
   transition: all 0.25s ease;
 }
+
 .addExpenseBtn:hover {
   background-color: grey;
   color: blue;
@@ -370,13 +212,46 @@ background-color: aquamarine;
 .expenseTable {
   width: 100%;
   border-collapse: collapse;
-  background-color: aquamarine;
+  background: var(--tracker-expense-table-bg);
+}
+
+/* for long description wrapping */
+/* Table cell */
+.descriptionCol {
+  position: relative;
+  max-width: 250px;
+}
+
+/* Truncate text */
+.descriptionText {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Dropdown */
+.descriptionDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 6px;
+  z-index: 20;
+  width: 300px;
+  padding: 10px 12px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 
 
+
 .expenseTableTitles {
-  background-color: yellow;
+  background-color: var(--tracker-expense-table-titles-bg);
 }
 
 /* combine this with expenseTableTitles ^^ */
@@ -399,10 +274,7 @@ background-color: aquamarine;
   text-align: right;
 }
 
-.expenseData {
-  background-color: green;
 
-}
 
 
 /* Right column */
@@ -443,4 +315,4 @@ background-color: aquamarine;
 
 .iconButton.delete:hover {
   background-color: rgba(255, 0, 0, 0.1);
-}
+} 
