@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../App.css";
 const API = "http://localhost:4000";
-
+import "../styles/auth-pages.css";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -102,7 +101,7 @@ export default function Login() {
             </label>
             {error && <div className="errorMessage">{error}</div>}
 
-            <button className="authBtn" type="submit">
+            <button className="authSubmitBtn" type="submit">
               {loading ? "Signing in..." : "Sign in"}
             </button>
 

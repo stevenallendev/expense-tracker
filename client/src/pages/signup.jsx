@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../App.css";
+import "../styles/auth-pages.css";
 
 
 const API = "http://localhost:4000";
@@ -208,7 +208,7 @@ export default function Signup() {
             </label>
             {error && <div className="errorMessage">{error}</div>}
 
-            <button className="authBtn" type="submit" disabled={loading}>
+            <button className="authSubmitBtn" type="submit" disabled={loading}>
               {loading ? "Submitting..." : "Submit"}
             </button>
 

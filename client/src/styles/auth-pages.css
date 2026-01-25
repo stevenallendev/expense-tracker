@@ -1,32 +1,35 @@
 /* auth pages  */
 .authFormContainer {
   background-color: lightgrey;
-  max-width: 420px;
-  margin: 100px auto;
-  padding: 24px;
+  max-width: 700px;
+  margin: 50px auto;
+  padding: 28px;
   border-radius: 16px;
   border-style: groove;
-  border-width: 12px;
+  border-width: 8px;
   min-height: 460px;
 }
 
 .authLogo {
   width: 240px;
-  margin-bottom: 8px;
+  margin-bottom: 0px;
 }
 
 
 .authTitle {
   font-size: 48px;
   font-weight: bold;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   display: block;
+  background: linear-gradient(135deg, darkblue, #22c55e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .authForm {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
 }
 
 .authForm label {
@@ -43,7 +46,7 @@
 }
 
 .authForm input {
-  width: 60%;
+  width: 70%;
   border-radius: 10px;
   border: none;
   padding: 8px;
@@ -51,7 +54,7 @@
   margin: 0px auto;
 }
 
-.authBtn {
+.authSubmitBtn {
   width: 60%;
   border-radius: 16px;
   border: none;
@@ -65,7 +68,7 @@
   transition: all 0.25s ease;
 }
 
-.authhover {
+.authSubmitBtn:hover {
   background-color: grey;
   color: blue;
 }

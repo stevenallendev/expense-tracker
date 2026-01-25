@@ -23,35 +23,7 @@ body,
 }
 
 body {
-  background-color: lightblue;
-  margin: 0;
-}
-/* Global Styles */
-
-* {
-  box-sizing: border-box;
-}
-
-#root {
-  text-align: center;
-}
-
-
-.page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-html,
-body,
-#root {
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  background-color: lightblue;
+  background: #dbe4f2;
   margin: 0;
 }
 
@@ -64,7 +36,7 @@ body.authPages {
 
 
 .content {
-  max-width: 1100px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 0 24px;
   flex: 1;

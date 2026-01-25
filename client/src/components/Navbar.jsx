@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { capitalize } from "../utils/Capitalize";
+import "../styles/navbar.css";
 
 
 const API = "http://localhost:4000";

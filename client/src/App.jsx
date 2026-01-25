@@ -1,10 +1,10 @@
-import "./App.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
 import ExpenseTracker from "./pages/expense-tracker";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import TrackerLayout from "./layouts/TrackerLayout";
+import "./styles/globals.css";
 
 export default function App() {
   return (

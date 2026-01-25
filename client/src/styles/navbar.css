@@ -1,0 +1,29 @@
+/*Navbar*/
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 32px;
+  background: linear-gradient(135deg, #0f172a, #1e40af);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.navbarLeft {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.navbarLogo {
+  height: 55px;
+}
+
+.navbarRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+

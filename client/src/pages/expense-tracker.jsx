@@ -3,6 +3,7 @@ import { todayYYYYMMDD, formatMMDDYYYY } from "../utils/DateFormatter";
 import { dollarsToCents } from "../utils/ParseDollarsToCents";
 import { Link, useNavigate } from "react-router-dom";
 import useFilteredExpenses from "../hooks/FilteredExpenses.js";
+import "../styles/expense-tracker.css";
 
 const API = "http://localhost:4000";
 
@@ -334,12 +335,11 @@ export default function Tracker() {
 
   //dynamically change "total" label when filtering
   const totalLabel = useMemo(() => {
-    if (!month && !year) return "Total";
+    if (!month && !year) return "Total expenses";
 
-    if (month && year) return `Total for ${month} ${year}`;
-    if (month) return `Total for ${month}`;
-    if (year) return `Total for ${year}`;
-
+    if (month && year) return `Total expenses for ${month} ${year}`;
+    if (month) return `Total expenses for ${month}`;
+    if (year) return `Total expenses for ${year}`;
     return "Total";
   }, [month, year]);
 
@@ -370,8 +370,10 @@ export default function Tracker() {
                 {showAddForm ? "- Close" : "+ Add Expense"}
               </button>
             </div>
-            <div className="addExpenseFormContainer">
-              {showAddForm && (
+
+            {showAddForm && (
+              <div className="addExpenseFormContainer">
+
                 <form className="expenseForm" onSubmit={onSubmit}>
                   <label>
                     <span>Amount (USD)</span>
@@ -440,8 +442,9 @@ export default function Tracker() {
 
                   {error && <div className="errorMessage">{error}</div>}
                 </form>
+              
+              </div>
               )}
-            </div>
 
           </section>
 
@@ -499,7 +502,7 @@ export default function Tracker() {
               </div>
               <div className="totalsContainer">
                 <p>
-                  {totalLabel} ${totalDollars}
+                  {totalLabel}:  <span>${totalDollars}</span>
                 </p>
               </div>
             </div>
@@ -522,7 +525,7 @@ export default function Tracker() {
                     </tr>
                   </thead>
 
-                  <tbody className="expanseTableInfo">
+                  <tbody className="expenseTableInfo">
                     {filteredExpenses.map((e) =>
                       isEditing(e) ? (
                         <tr key={e.id}>
@@ -598,13 +601,10 @@ export default function Tracker() {
                             className="descriptionColumn"
                             onClick={() => toggleExpanded(e.id)}
                             style={{ cursor: "pointer" }}
+                            title={e.description}
                           >
-                            <span className="descriptionText">{truncateText(e.description, 11)}</span>
-                            {expandedId === e.id && (
-                              <div className="descriptionDropdown">
-                                {e.description}
-                              </div>
-                            )}
+                            {truncateText(e.description, 11)}
+
                           </td>
                           <td className="amountCol">
                             ${(e.amount_cents / 100).toFixed(2)}
@@ -640,7 +640,7 @@ export default function Tracker() {
                               disabled={isLocked(e)}
                               title="Mark unpaid"
                             >
-                              ✅ Paid
+                              ✅
                             </button>
                           </td>
                         </tr>
@@ -751,7 +751,12 @@ export default function Tracker() {
                         <tr key={e.id} className="futureItem due">
                           <td>{formatMMDDYYYY(e.date)}</td>
                           <td>{e.category}</td>
-                          <td>{e.description}</td>
+                          <td className="descriptionColumn"
+                            onClick={() => toggleExpanded(e.id)}
+                            style={{ cursor: "pointer" }}
+                            title={e.description}>
+                            {truncateText(e.description, 11)}
+                          </td>
                           <td className="amountCol">
                             ${(e.amount_cents / 100).toFixed(2)}
                           </td>
@@ -886,7 +891,10 @@ export default function Tracker() {
                         <tr key={e.id} className="futureItem">
                           <td>{formatMMDDYYYY(e.date)}</td>
                           <td>{e.category}</td>
-                          <td>{e.description}</td>
+                          <td className="descriptionColumn"
+                            onClick={() => toggleExpanded(e.id)}
+                            style={{ cursor: "pointer" }}
+                            title={e.description}>{truncateText(e.description, 11)}</td>
                           <td className="amountCol">
                             ${(e.amount_cents / 100).toFixed(2)}
                           </td>
