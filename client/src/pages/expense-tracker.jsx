@@ -422,7 +422,7 @@ export default function Tracker() {
                     <input
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Lunch, Netflix, etc."
+                      placeholder="Lunch, Clothes, etc."
                       required
                       onInvalid={(e) =>
                         e.target.setCustomValidity("Description Required")
