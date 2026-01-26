@@ -59,7 +59,7 @@
 .leftColumn,
 .rightColumn {
   flex: 1;
-  min-width: 0;
+  min-width: 489px;
   display: flex;
   flex-direction: column;
   border-style: groove;

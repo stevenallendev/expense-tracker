@@ -40,30 +40,29 @@ export default function Signup() {
     e.preventDefault();
 
     // Front end validation
-    const signupError = {};
 
-    if (!username.trim()) return setError("Username is required");
-    if (!firstName.trim()) return setError("First name is required");
-    if (!lastName.trim()) return setError("Last name is required");
+    const u = username.trim();
+    const fn = firstName.trim();
+    const ln = lastName.trim();
+    const em = email.trim();
+    const vem = verifyEmail.trim();
+    
+    if (!u) return setError("Username is required");
+    if (!fn) return setError("First name is required");
+    if (!ln) return setError("Last name is required");
 
-    if (!email.trim()) return setError("Email is required");
+    if (!em) return setError("Email is required");
     if (!emailRegex.test(email.trim()))
       return setError("Please enter a valid email (example@domain.com)");
 
-    if (!verifyEmail.trim()) return setError("Please verify your email");
-    if (email !== verifyEmail) return setError("Emails do not match");
+    if (!vem) return setError("Please verify your email");
+    if (em !== vem) return setError("Emails do not match");
 
     if (!password) return setError("Password is required");
     if (!verifyPassword) return setError("Please verify your password");
-    if (password !== verifyPassword) return setError("Passwords do not match");
+    if (password !== verifyPassword) return setError("Passwords do not match")
 
-
-    if (Object.keys(signupError).length > 0) {
-      setError(signupError);
-      return;
-    }
-
-    setError({});
+    setError("");
     setLoading(true);
 
 
@@ -73,26 +72,22 @@ export default function Signup() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          username,
-          firstName,
-          lastName,
-          email,
+          username: u,
+          firstName: fn,
+          lastName: ln,
+          email: em,
           password,
         }),
       });
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        if (data.field) {
-          setError({ [data.field]: data.error });
-        } else {
-          setError({ form: data.error ?? "Signup failed" });
-        }
+        setError(data.error ?? "Signup failed");
         return;
       }
 
       //After POST, route back to login
-      navigate("/login");
+      navigate("/login",{replace:true});
     } catch {
       setError({ form: "Unable to connect to server" });
     } finally {
