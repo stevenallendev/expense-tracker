@@ -36,7 +36,7 @@ export default function Login() {
       const res = await fetch(`${API}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // IMPORTANT for sessions
+        credentials: "include",
         body: JSON.stringify({
           email: email.trim(),
           password,
@@ -50,8 +50,8 @@ export default function Login() {
         return;
       }
 
-      // Logged in successfully
-      navigate("/expense-tracker"); // adjust if your route differs
+      //After successful login, route to this page
+      navigate("/expense-tracker");
     } catch {
       setError("Unable to connect to server");
     } finally {
@@ -110,7 +110,6 @@ export default function Login() {
             <span>Don't have an account? <Link to="/signup">Sign up</Link></span>
           </div>
         </div>
-
       </main>
     </div>
   );

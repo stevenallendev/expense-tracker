@@ -9,21 +9,18 @@ import "./styles/globals.css";
 export default function App() {
   return (
     <div className="page">
-
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-
         <Route element={<ProtectedRoute />}>
-        <Route element={<TrackerLayout />}>
-        <Route path="/expense-tracker" element={<ExpenseTracker />} />
-        </Route>
+          <Route element={<TrackerLayout />}>
+            <Route path="/expense-tracker" element={<ExpenseTracker />} />
+          </Route>
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-
     </div>
   );
 }

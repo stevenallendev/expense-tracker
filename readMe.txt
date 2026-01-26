@@ -1,73 +1,101 @@
-Full Setup & Run Commands
-# clone the repo
+Expense Tracker App - layman's README
+
+A simple full-stack expense tracking app where users can log in, add expenses, mark them paid, and filter past spending.
+
+This project has two parts that must run together:
+
+Frontend → The website you use
+
+Backend → The server that stores data
+
+🚀 How to Run the App
+1️⃣ Download the project
 git clone https://github.com/stevenallendev/expense-tracker.git
 cd expense-tracker
 
-Backend (API)
+🧠 Start the Backend (Server)
 cd server
 npm install
 npm run dev
 
 
-Leave this terminal running
+This starts the API that handles logins and expenses.
 
-Frontend (React App)
-cd ../client
+Leave this terminal open and running.
+
+🌐 Start the Frontend (Website)
+
+Open a new terminal window:
+
+cd client
 npm install
 npm run dev
 
-What npm install does
 
-Downloads all required dependencies listed in package.json
+This starts the React app.
 
-Creates the node_modules folder
+🔗 App URLs
+Part	URL
+Website	http://localhost:5173
 
-Must be run once per folder (server and client)
+Server API	http://localhost:4000
 
-App URLs
-Frontend: http://localhost:5173
-Backend:  http://localhost:4000
+Open 5173 in your browser.
 
-Common issues
-# stop a running process
+📦 What npm install does
+
+It downloads all the required tools for the project and creates a node_modules folder.
+
+You must run it:
+
+Once in /server
+
+Once in /client
+
+🛑 How to stop the app
+
+In the terminal:
+
 Ctrl + C
 
-# reinstall dependencies if something is weird
-rm -rf node_modules
-npm installFull Setup & Run Commands
-# clone the repo
-git clone https://github.com/stevenallendev/expense-tracker.git
-cd expense-tracker
+🧯 If something breaks
 
-Backend (API)
-cd server
-npm install
-npm run dev
+Reinstall dependencies:
 
-
-Leave this terminal running
-
-Frontend (React App)
-cd ../client
-npm install
-npm run dev
-
-What npm install does
-
-Downloads all required dependencies listed in package.json
-
-Creates the node_modules folder
-
-Must be run once per folder (server and client)
-
-App URLs
-Frontend: http://localhost:5173
-Backend:  http://localhost:4000
-
-Common issues
-# stop a running process
-Ctrl + C
-
-# reinstall dependencies if something is weird
 rm -rf node_modules
 npm install
+
+
+(Do this in server or client depending on where the issue is.)
+
+🧩 How the app works (simple)
+Browser → Frontend → Backend → Database
+
+
+You use the website → it talks to the server → the server saves your expenses.
+
+✅ Features
+
+User login & signup
+
+Add expenses
+
+Edit & delete expenses
+
+Mark expenses paid/unpaid
+
+View upcoming vs past-due expenses
+
+Filter by month, year, and category
+
+🧑‍💻 Tech Used
+
+React (Frontend)
+
+Express + Node.js (Backend)
+
+SQLite database
+
+Sessions for login authentication
+
+Tip: Always start the server first, then the client.

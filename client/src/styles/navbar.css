@@ -1,4 +1,12 @@
 /*Navbar*/
+:root {
+  --navbar-default-color: #1e40af;
+  --navbar-text-color: lightblue;
+  --navbar-logout-btn-text: #0e49a5n;
+  --navbar-logout-btn-bg: darkgrey;
+  --navbar-logout-btn-hover-text: pink;
+  --navbar-logout-btn-hover-bg: crimson;
+}
 
 .navbar {
   display: flex;
@@ -6,9 +14,13 @@
   justify-content: space-between;
   height: 64px;
   padding: 0 32px;
+  background-color: var(--navbar-default-color);
   background: linear-gradient(135deg, #0f172a, #1e40af);
-  color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.navbar p {
+  color: var(--navbar-text-color)
 }
 
 .navbarLeft {
@@ -27,3 +39,34 @@
   gap: 16px;
 }
 
+.welcomeText {
+  font-size: 20px;
+}
+
+.logoutBtn {
+  color: red;
+}
+
+.logoutBtn {
+  border-radius: 10px;
+  border: none;
+  padding: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--navbar-logout-btn-text);
+  background: var(--navbar-logout-btn-bg);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.logoutBtn:hover {
+  border-radius: 10px;
+  border: none;
+  padding: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--navbar-logout-btn-hover-text);
+  background: var(--navbar-logout-btn-hover-bg);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}

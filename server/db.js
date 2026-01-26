@@ -5,7 +5,7 @@ const path = require("path");
 const db = new Database(path.join(__dirname, "db.sqlite"));
 db.pragma("foreign_keys = ON");
 
-// USERS
+// creates db.users table
 db.exec(`
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 `);
 
-// EXPENSES (scoped to user)
+// creates db.expenses table (scoped to user)
 db.exec(`
 CREATE TABLE IF NOT EXISTS expenses (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

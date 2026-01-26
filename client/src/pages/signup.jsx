@@ -17,6 +17,7 @@ export default function Signup() {
   const [verifyPassword, setVerifyPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   //for email formatting validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -38,7 +39,7 @@ export default function Signup() {
   async function onSubmit(e) {
     e.preventDefault();
 
-    // ---- Front-end validation ----
+    // Front end validation
     const signupError = {};
 
     if (!username.trim()) return setError("Username is required");
@@ -66,7 +67,6 @@ export default function Signup() {
     setLoading(true);
 
 
-    // ---- Backend call ----
     try {
       const res = await fetch(`${API}/api/signup`, {
         method: "POST",
@@ -91,8 +91,8 @@ export default function Signup() {
         return;
       }
 
-      // Signup auto-logs in on your backend
-      navigate("/login"); // change if your route differs
+      //After POST, route back to login
+      navigate("/login");
     } catch {
       setError({ form: "Unable to connect to server" });
     } finally {
@@ -114,7 +114,7 @@ export default function Signup() {
 
             <label>
               <input
-              placeholder="Username"
+                placeholder="Username"
                 type="text"
                 autoComplete="username"
                 value={username}
@@ -127,61 +127,61 @@ export default function Signup() {
 
             <label>
               <input
-              placeholder="First Name"
+                placeholder="First Name"
                 type="text"
                 autoComplete="given-name"
                 value={firstName}
                 onChange={(e) => {
                   setFirstName(e.target.value);
-                 if (error) setError("");
+                  if (error) setError("");
                 }}
               />
             </label>
 
             <label>
               <input
-              placeholder="Last Name"
+                placeholder="Last Name"
                 type="text"
                 autoComplete="family-name"
                 value={lastName}
                 onChange={(e) => {
                   setLastName(e.target.value);
-                 if (error) setError("");
+                  if (error) setError("");
                 }}
-               
+
               />
             </label>
 
             <label>
               <input
-              placeholder="Email"
+                placeholder="Email"
                 type="email"
                 autoComplete="email"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
-                 if (error) setError("");
+                  if (error) setError("");
                 }}
-              
+
               />
             </label>
 
             <label>
               <input
-              placeholder="Verify email"
+                placeholder="Verify email"
                 type="email"
                 value={verifyEmail}
                 onChange={(e) => {
                   setVerifyEmail(e.target.value);
                   if (error) setError("");
                 }}
-                
+
               />
             </label>
 
             <label>
               <input
-              placeholder="Password"
+                placeholder="Password"
                 type="password"
                 autoComplete="new-password"
                 value={password}
@@ -189,13 +189,13 @@ export default function Signup() {
                   setPassword(e.target.value);
                   if (error) setError("");
                 }}
-             
+
               />
             </label>
 
             <label>
               <input
-              placeholder="Verify password"
+                placeholder="Verify password"
                 type="password"
                 autoComplete="new-password"
                 value={verifyPassword}
@@ -203,7 +203,7 @@ export default function Signup() {
                   setVerifyPassword(e.target.value);
                   if (error) setError("");
                 }}
-               
+
               />
             </label>
             {error && <div className="errorMessage">{error}</div>}
@@ -214,7 +214,7 @@ export default function Signup() {
 
           </form>
           <div className="authLinkContainer">
-           <span>Already have an account? <Link to="/login">login</Link></span>
+            <span>Already have an account? <Link to="/login">login</Link></span>
           </div>
         </div>
       </main>

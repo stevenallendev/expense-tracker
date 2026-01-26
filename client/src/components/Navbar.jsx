@@ -55,14 +55,13 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbarLeft">
-        <img src="/public/expenseTrackerLogo.png" alt="logo placeholder" className="navbarLogo" />
       </div>
       <div className="navbarRight">
 
         {user && (
 
           <p className="welcomeText">
-            Welcome, <strong>{capitalize(user.first_name)} </strong>
+            Welcome, <strong>{capitalize(user.username)}! </strong>
 
           </p>
         )}

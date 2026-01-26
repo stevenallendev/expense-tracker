@@ -1,5 +1,7 @@
-  export function dollarsToCents(text) {
-    const n = Number(text);
-    if (!Number.isFinite(n)) return null;
-    return Math.round(n * 100);
-  }
+
+//Converts text value to numerical value
+export function dollarsToCents(text) {
+  const n = Number(text);
+  if (!Number.isFinite(n)) return null;
+  return Math.round(n * 100);
+}

@@ -1,4 +1,4 @@
-/* auth pages  */
+/* auth pages - from top to bottom  */
 .authFormContainer {
   background-color: lightgrey;
   max-width: 700px;
@@ -15,15 +15,14 @@
   margin-bottom: 0px;
 }
 
-
 .authTitle {
   font-size: 48px;
   font-weight: bold;
   margin-bottom: 8px;
   display: block;
   background: linear-gradient(135deg, darkblue, #22c55e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .authForm {

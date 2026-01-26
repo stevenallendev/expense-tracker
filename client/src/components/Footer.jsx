@@ -5,9 +5,8 @@ export default function Footer() {
     <footer className="footer">
       <div className="footerContent">
         <span>© {new Date().getFullYear()} ExpenseTracker</span>
-        <span className="footerRight">Built by You 💻</span>
+        <span className="footerRight">Project #1</span>
       </div>
     </footer>
-
   );
 }

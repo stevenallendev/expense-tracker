@@ -1,5 +1,4 @@
 // Expense tracker data input, output, etc
-
 const express = require("express");
 const requireAuth = require("../middleware/requireAuth");
 
@@ -108,33 +107,31 @@ module.exports = function expenseRoutes(db) {
   });
 
   // Set expense paid/unpaid (for current user)
-router.post("/:id/set-paid", requireAuth, (req, res) => {
-  console.log("hit ser-paid", req.method, req.originalUrl);
-console.log("set-paid body:", req.body, "paid type:", typeof req.body?.paid);
+  router.post("/:id/set-paid", requireAuth, (req, res) => {
+    console.log("hit ser-paid", req.method, req.originalUrl);
+    console.log("set-paid body:", req.body, "paid type:", typeof req.body?.paid);
 
+    const userId = req.session.userId;
+    const { id } = req.params;
+    const { paid } = req.body ?? {};
 
-  const userId = req.session.userId;
-  const { id } = req.params;
-  const { paid } = req.body ?? {};
+    //updates db.user.paid_at 
+    if (typeof paid !== "boolean") {
+      return res.status(400).json({ error: "paid must be boolean" });
+    }
 
-  if (typeof paid !== "boolean") {
-    return res.status(400).json({ error: "paid must be boolean" });
-  }
-
-  const result = db.prepare(`
+    const result = db.prepare(`
     UPDATE expenses
     SET paid_at = CASE WHEN ? = 1 THEN datetime('now') ELSE NULL END
     WHERE id = ? AND user_id = ?
   `).run(paid ? 1 : 0, id, userId);
 
-  if (result.changes === 0) {
-    return res.status(404).json({ error: "Expense not found" });
-  }
+    if (result.changes === 0) {
+      return res.status(404).json({ error: "Expense not found" });
+    }
 
-  return res.json({ ok: true });
-});
-
-
+    return res.json({ ok: true });
+  });
 
   // Delete expense (only if it belongs to user)
   router.delete("/:id", requireAuth, (req, res) => {

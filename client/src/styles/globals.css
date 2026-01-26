@@ -8,7 +8,6 @@
   text-align: center;
 }
 
-
 .page {
   min-height: 100vh;
   display: flex;
@@ -33,15 +32,12 @@ body.authPages {
   background: linear-gradient(135deg, #0f172a, #1e40af);
 }
 
-
-
 .content {
   max-width: 1300px;
   margin: 0 auto;
   padding: 0 24px;
   flex: 1;
 }
-
 
 .errorMessage {
   color: crimson;

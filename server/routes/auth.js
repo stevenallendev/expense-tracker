@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 module.exports = function authRoutes(db) {
   const router = express.Router();
 
-  // Signup (does NOT auto-login)
+  // Signup/creates new user (does NOT auto-login)
   router.post("/signup", async (req, res) => {
     const { username, firstName, lastName, email, password } = req.body ?? {};
 
@@ -42,7 +42,7 @@ module.exports = function authRoutes(db) {
     }
   });
 
-  // Login
+  // Login/start new session
   router.post("/login", async (req, res) => {
     const { email, password } = req.body ?? {};
 
@@ -68,7 +68,7 @@ module.exports = function authRoutes(db) {
     }
   });
 
-  // Me
+  // Retrieve user's own data 
   router.get("/me", (req, res) => {
     if (!req.session?.userId) return res.status(401).json({ error: "Not logged in" });
 
@@ -81,7 +81,7 @@ module.exports = function authRoutes(db) {
     return res.json({ user });
   });
 
-  // Logout
+  // Logout/end session
   router.post("/logout", (req, res) => {
     req.session.destroy((err) => {
       if (err) {

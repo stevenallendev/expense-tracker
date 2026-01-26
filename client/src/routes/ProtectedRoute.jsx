@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 
 const API = "http://localhost:4000";
 
+
+//Allows only logged in users to see page
 export default function ProtectedRoute() {
   const [loading, setLoading] = useState(true);
   const [isAuthed, setIsAuthed] = useState(false);

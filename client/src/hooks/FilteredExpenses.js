@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 
+
+//Function to filter displayed results by selected month/year
 export default function useFilteredExpenses({
     expenses,
     categoryFilter,

@@ -44,21 +44,25 @@ export default function Tracker() {
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
 
-  // User
-  const [user, setUser] = useState(null);
-  const [loggingOut, setLoggingOut] = useState(false);
+ 
 
   // -----------------------------
   // Constants / helper funcs
   // -----------------------------
+
+  //formats current date
   const today = todayYYYYMMDD();
+
+  //safety net for expenses
   const safeExpenses = Array.isArray(expenses) ? expenses : [];
 
+  //set labels for add expense category dropdown
   const categories = useMemo(
     () => ["Food", "Gas", "Bills", "Shopping", "Entertainment", "Other"],
     []
   );
 
+  //set labels for filter dropdown
   const months = useMemo(
     () => [
       "January", "February", "March", "April", "May", "June",
@@ -67,7 +71,10 @@ export default function Tracker() {
     []
   );
 
+  //gets current year from built in function
   const currentYear = new Date().getFullYear();
+
+  //fills dropdown of years in filter
   const yearOptions = useMemo(() => {
     const years = [];
     for (let y = currentYear + 5; y >= 2020; y--) years.push(String(y));
@@ -84,6 +91,13 @@ export default function Tracker() {
   // -----------------------------
 
 
+  //left table
+ const paidExpenses = useMemo(
+    () => safeExpenses.filter((e) => !!e.paid_at),
+    [safeExpenses]
+  );
+
+  //right tables
   const unpaidExpenses = useMemo(
     () => safeExpenses.filter((e) => !e.paid_at),
     [safeExpenses]
@@ -99,15 +113,6 @@ export default function Tracker() {
     [unpaidExpenses, today]
   );
 
-
-  // LEFT SIDE
-  const paidExpenses = useMemo(
-    () => safeExpenses.filter((e) => !!e.paid_at),
-    [safeExpenses]
-  );
-
-
-  // Filtered table data MUST come after paidExpenses exists
   const filteredExpenses = useFilteredExpenses({
     expenses: paidExpenses,
     categoryFilter,
@@ -116,10 +121,13 @@ export default function Tracker() {
     months,
   });
 
+  //add shown expenses to be displayed as cumulative total
   const totalCents = useMemo(
     () => filteredExpenses.reduce((sum, e) => sum + e.amount_cents, 0),
     [filteredExpenses]
   );
+
+  //converts cents to dollars
   const totalDollars = (totalCents / 100).toFixed(2);
 
   const isEditing = (e) => editingId === e.id;
@@ -130,7 +138,7 @@ export default function Tracker() {
   // Data loading / handlers
   // -----------------------------
 
-
+//pull to load expenses
   async function loadExpenses() {
     setLoading(true);
     setError("");
@@ -152,7 +160,7 @@ export default function Tracker() {
     }
   }
 
-
+// function to PUT change of paid state for a specific piece of data
   async function setPaid(id, paid) {
     if (typeof paid !== "boolean") {
       console.error("setPaid paid must be boolean, got:", paid, typeof paid);
@@ -184,7 +192,7 @@ export default function Tracker() {
     }
   }
 
-
+// function to POST new data using add expense form
   async function onSubmit(e) {
     e.preventDefault();
     setSaving(true);
@@ -220,6 +228,7 @@ export default function Tracker() {
     }
   }
 
+  // function to DELETE specific row
   async function onDelete(id) {
     if (!window.confirm("Delete this expense?")) return;
 
@@ -236,7 +245,7 @@ export default function Tracker() {
 
     await loadExpenses();
   }
-
+//function to edit data states
   function startEdit(expense) {
     setEditingId(expense.id);
     setEditAmount((expense.amount_cents / 100).toFixed(2));
@@ -246,12 +255,15 @@ export default function Tracker() {
     setError("");
   }
 
+  //function to cancel editing data states
   function cancelEdit() {
     setEditingId(null);
     setUpdating(false);
     setError("");
   }
 
+
+  //function to PUT edited row/data
   async function saveEdit(id) {
     setUpdating(true);
     setError("");
@@ -297,11 +309,7 @@ export default function Tracker() {
     }
   }
 
-  // Toggle description expansion
-  function toggleExpanded(id) {
-    setExpandedId(prev => (prev === id ? null : id));
-  }
-
+  //function to help truncate long description texts
   function truncateText(text, maxLength = 25) {
     if (!text) return "";
     return text.length > maxLength
@@ -312,6 +320,8 @@ export default function Tracker() {
   // -----------------------------
   // Effects
   // -----------------------------
+
+  //if user != logged in, return to login page
   useEffect(() => {
     (async () => {
       try {
@@ -321,7 +331,6 @@ export default function Tracker() {
           return;
         }
         const data = await res.json();
-        setUser(data.user);
       } catch {
         navigate("/login");
       }
@@ -349,7 +358,8 @@ export default function Tracker() {
 
   return (
     <main className="content">
-      <p className="title">Title Here</p>
+              <img src="/public/expenseTrackerLogo.png" alt="logo placeholder" className="expenseTrackerLogo" />
+
 
       {/* ===================== LEFT COLUMN ===================== */}
 
@@ -360,10 +370,10 @@ export default function Tracker() {
               <span className="columnTitles">Expenses</span>
             </div>
 
-            <div className="addExpenseHeader">
+            <div className={`addExpenseHeader ${showAddForm ? "close" : "addExpense"}`}>
               <button
                 type="button"
-                className="addExpenseToggleBtn"
+                className={`addExpenseToggleBtn ${showAddForm ? "close" : "addExpense"}`}
                 onClick={() => setShowAddForm((v) => !v)}
                 aria-expanded={showAddForm}
               >
@@ -442,9 +452,9 @@ export default function Tracker() {
 
                   {error && <div className="errorMessage">{error}</div>}
                 </form>
-              
+
               </div>
-              )}
+            )}
 
           </section>
 
@@ -474,6 +484,7 @@ export default function Tracker() {
                   ))}
                 </select>{" "}
                 <button
+                className="filterClearBtn"
                   type="button"
                   onClick={() => {
                     setCategoryFilter("All");
